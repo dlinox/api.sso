@@ -1,0 +1,112 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Office;
+use App\Models\Role;
+use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+
+class UserController extends Controller
+{
+    public function index()
+    {
+        $professors = User::latest()->get();
+        return response()->json($professors);
+    }
+
+    public function offices()
+    {
+        $professors = Office::select('id', 'name')->latest()->active()->get();
+        return response()->json($professors);
+    }
+
+    public function roles()
+    {
+        $professors = Role::select('id', 'name')->latest()->get();
+        return response()->json($professors);
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate(
+            [
+                'name' => 'required|string|max:255',
+                'paternal_surname' =>  'required|max:255',
+                'maternal_surname' => 'required|max:255',
+                'document_type' => 'required|max:3',
+                'document_number' =>  'required|max:20',
+                'email' => 'required|email|max:255|unique:users',
+                'password' => 'required',
+                'office_id' => 'nullable|exists:offices,id',
+                'role_id' => 'required|exists:roles,id',
+                'status' => 'required|boolean'
+            ],
+            [
+                'name.required' => 'El nombre es obligatorio',
+                'paternal_surname.required' => 'El apellido paterno es obligatorio',
+                'maternal_surname.required' => 'El apellido materno es obligatorio',
+                'document_type.required' => 'El tipo de documento es obligatorio',
+                'document_number.required' => 'El número de documento es obligatorio',
+                'email.required' => 'El correo electrónico es obligatorio',
+                'role_id.required' => 'El rol es obligatorio',
+                'password.required' => 'La contraseña es obligatoria',
+                'status.required' => 'El estado es obligatorio'
+            ]
+        );
+        try {
+            DB::beginTransaction();
+            $user = User::create($request->only('name', 'paternal_surname', 'maternal_surname', 'document_type', 'document_number', 'email', 'password', 'office_id', 'status'));
+            $user->assignRole($request->role_id);
+            DB::commit();
+            return response()->json($user);
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return response()->json($e->getMessage());
+        }
+    }
+
+    public function update(Request $request, $user)
+    {
+        $request->validate(
+            [
+                'name' => 'required|string|max:255',
+                'paternal_surname' =>  'required|max:255',
+                'maternal_surname' => 'required|max:255',
+                'document_type' => 'required|max:3',
+                'document_number' =>  'required|max:20',
+                'email' => 'required|email|max:255|unique:users,email,' . $user,
+                'office_id' => 'nullable|exists:offices,id',
+                'role_id' => 'required|exists:roles,id',
+                'status' => 'required|boolean'
+            ],
+            [
+                'name.required' => 'El nombre es obligatorio',
+                'paternal_surname.required' => 'El apellido paterno es obligatorio',
+                'maternal_surname.required' => 'El apellido materno es obligatorio',
+                'document_type.required' => 'El tipo de documento es obligatorio',
+                'document_number.required' => 'El número de documento es obligatorio',
+                'email.required' => 'El correo electrónico es obligatorio',
+                'role_id.required' => 'El rol es obligatorio',
+                'status.required' => 'El estado es obligatorio'
+            ]
+        );
+        try {
+            DB::beginTransaction();
+            $user = User::find($user);
+            $user->update($request->only('name', 'paternal_surname', 'maternal_surname', 'document_type', 'document_number', 'email', 'office_id', 'status'));
+            $user->syncRoles($request->role_id);
+            DB::commit();
+            return response()->json($user);
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return response()->json($e->getMessage());
+        }
+    }
+    
+
+    
+}
