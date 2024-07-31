@@ -40,26 +40,29 @@ class Attention extends Model
 
     public function getPersonTypeNameAttribute()
     {
-        switch ($this->attributes['person_type']) {
-            case '001':
-                return 'Estudiante';
-                break;
-            case '002':
-                return 'Docente';
-                break;
-            case '003':
-                return 'Administrativo / Obrero / Obras';
-                break;
-            case '004':
-                return 'Externo';
-                break;
-            default:
-                return 'No definido';
-                break;
+        if (isset($this->attributes['person_type'])) {
+            switch ($this->attributes['person_type']) {
+                case '001':
+                    return 'Estudiante';
+                    break;
+                case '002':
+                    return 'Docente';
+                    break;
+                case '003':
+                    return 'Administrativo / Obrero / Obras';
+                    break;
+                case '004':
+                    return 'Externo';
+                    break;
+                default:
+                    return 'No definido';
+                    break;
+            }
         }
+        return false;
     }
 
-    
+
 
     public function user()
     {

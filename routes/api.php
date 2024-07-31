@@ -99,5 +99,7 @@ Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'attentions'], functio
     Route::post('/{type}', [AttentionController::class, 'store']);
     //report 
     Route::get('/report', [AttentionController::class, 'report']);
+    //offices
+    Route::get('/offices', [AttentionController::class, 'offices']);
     // Route::put('/{attention}', [AttentionController::class, 'update'])->middleware('can:attentions.update');
 });
