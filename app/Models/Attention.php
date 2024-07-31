@@ -10,27 +10,56 @@ use function PHPSTORM_META\type;
 class Attention extends Model
 {
     use HasFactory;
+    /*
+    person_type
+    001: Estudiante
+    002: Profesor
+    003: Administrativo / Obrero / Obras
+    004: Externo
+    */
 
-    
+
     protected $fillable = [
+        'person_type',
+        'person_id',
         'report_number',
         'description',
         'derivations',
-        'student_id',
         'type_attention_id',
         'user_id',
         'type_person',
     ];
 
-    public function student()
+    protected $casts = [
+        'created_at' => 'datetime:d/m/Y H:i:s',
+    ];
+
+    protected $appends = [
+        'person_type_name',
+    ];
+
+    public function getPersonTypeNameAttribute()
     {
-        return $this->belongsTo(Student::class);
+        switch ($this->attributes['person_type']) {
+            case '001':
+                return 'Estudiante';
+                break;
+            case '002':
+                return 'Docente';
+                break;
+            case '003':
+                return 'Administrativo / Obrero / Obras';
+                break;
+            case '004':
+                return 'Externo';
+                break;
+            default:
+                return 'No definido';
+                break;
+        }
     }
 
-    public function typeAttention()
-    {
-        return $this->belongsTo(TypeAttention::class);
-    }
+    
 
     public function user()
     {

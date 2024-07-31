@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Office;
 use App\Models\Professor;
 use Illuminate\Http\Request;
 
@@ -13,6 +14,7 @@ class ProfessorController extends Controller
         $professors = Professor::latest()->get();
         return response()->json($professors);
     }
+
 
     public function store(Request $request)
     {
@@ -26,7 +28,7 @@ class ProfessorController extends Controller
                 'birthdate' => 'nullable|date',
                 'phone_number' => 'nullable|digits:9',
                 'career_code' => 'nullable|max:3',
-                'professor_code' => 'nullable|max:20',
+                'code' => 'nullable|max:20',
                 'email' => 'nullable|email|max:255',
                 'gender' => 'nullable|max:1',
                 'status' => 'required|boolean'
@@ -63,7 +65,7 @@ class ProfessorController extends Controller
                 'birthdate' => 'nullable|date',
                 'phone_number' => 'nullable|digits:9',
                 'career_code' => 'nullable|max:3',
-                'professor_code' => 'nullable|max:20',
+                'code' => 'nullable|max:20',
                 'email' => 'nullable|email|max:255',
                 'gender' => 'nullable|max:1',
                 'status' => 'required|boolean'
@@ -87,5 +89,19 @@ class ProfessorController extends Controller
         } catch (\Exception $e) {
             return response()->json($e->getMessage());
         }
+    }
+
+    public function search($term)
+    {
+        $professors = Professor::where('document_number', 'like', '%' . $term . '%')
+            ->orWhereRaw("CONCAT_WS(' ', name, paternal_surname, maternal_surname) like '%$term%'")
+            ->get();
+        return response()->json($professors);
+    }
+
+    public function getByDocument($document)
+    {
+        $professor = Professor::where('document_number', $document)->first();
+        return response()->json($professor);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Office;
 use App\Models\Worker;
 use Illuminate\Http\Request;
 
@@ -11,6 +12,12 @@ class WorkerController extends Controller
     public function index()
     {
         $professors = Worker::latest()->get();
+        return response()->json($professors);
+    }
+
+    public function offices()
+    {
+        $professors = Office::select('id', 'name')->latest()->active()->get();
         return response()->json($professors);
     }
 
@@ -83,5 +90,19 @@ class WorkerController extends Controller
         } catch (\Exception $e) {
             return response()->json($e->getMessage());
         }
+    }
+
+    public function search($term)
+    {
+        $professors = Worker::where('document_number', 'like', '%' . $term . '%')
+            ->orWhereRaw("CONCAT_WS(' ', name, paternal_surname, maternal_surname) like '%$term%'")
+            ->get();
+        return response()->json($professors);
+    }
+
+    public function getByDocument($document)
+    {
+        $professor = Worker::where('document_number', $document)->first();
+        return response()->json($professor);
     }
 }

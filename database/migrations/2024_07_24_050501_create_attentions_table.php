@@ -17,18 +17,15 @@ return new class extends Migration
     {
         Schema::create('attentions', function (Blueprint $table) {
             $table->id();
-            $table->string('type_person');
+            $table->char('person_type', 3);
+            $table->bigInteger('person_id');
             $table->string('report_number');
             $table->text('description');
             $table->string('derivations')->nullable();
-            $table->unsignedBigInteger('student_id');
             $table->unsignedBigInteger('type_attention_id');
             $table->unsignedBigInteger('user_id');
-
-            $table->foreign('student_id')->references('id')->on('students');
             $table->foreign('type_attention_id')->references('id')->on('type_attentions');
             $table->foreign('user_id')->references('id')->on('users');
-
             $table->timestamps();
         });
     }

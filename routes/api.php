@@ -44,6 +44,8 @@ Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'professors'], functio
     Route::get('/', [ProfessorController::class, 'index'])->middleware('can:professors');
     Route::post('/', [ProfessorController::class, 'store'])->middleware('can:professors.create');
     Route::put('/{professor}', [ProfessorController::class, 'update'])->middleware('can:professors.update');
+    Route::get('/search/{term}', [ProfessorController::class, 'search']);
+    Route::get('/by-document/{document}', [ProfessorController::class, 'getByDocument']);
 });
 
 Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'students'], function () {
@@ -59,6 +61,10 @@ Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'workers'], function (
     Route::get('/', [WorkerController::class, 'index'])->middleware('can:workers');
     Route::post('/', [WorkerController::class, 'store'])->middleware('can:workers.create');
     Route::put('/{worker}', [WorkerController::class, 'update'])->middleware('can:workers.update');
+    Route::get('/offices', [WorkerController::class, 'offices']);
+
+    Route::get('/search/{term}', [WorkerController::class, 'search']);
+    Route::get('/by-document/{document}', [WorkerController::class, 'getByDocument']);
 });
 
 
@@ -66,6 +72,9 @@ Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'externals'], function
     Route::get('/', [ExternalController::class, 'index'])->middleware('can:externals');
     Route::post('/', [ExternalController::class, 'store'])->middleware('can:externals.create');
     Route::put('/{external}', [ExternalController::class, 'update'])->middleware('can:externals.update');
+
+    Route::get('/search/{term}', [ExternalController::class, 'search']);
+    Route::get('/by-document/{document}', [ExternalController::class, 'getByDocument']);
 });
 
 Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'users'], function () {
@@ -88,5 +97,7 @@ Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'attentions'], functio
     Route::get('/', [AttentionController::class, 'index']);
     Route::get('/last', [AttentionController::class, 'last']);
     Route::post('/{type}', [AttentionController::class, 'store']);
+    //report 
+    Route::get('/report', [AttentionController::class, 'report']);
     // Route::put('/{attention}', [AttentionController::class, 'update'])->middleware('can:attentions.update');
 });

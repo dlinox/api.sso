@@ -83,4 +83,18 @@ class ExternalController extends Controller
             return response()->json($e->getMessage());
         }
     }
+
+    public function search($term)
+    {
+        $professors = External::where('document_number', 'like', '%' . $term . '%')
+            ->orWhereRaw("CONCAT_WS(' ', name, paternal_surname, maternal_surname) like '%$term%'")
+            ->get();
+        return response()->json($professors);
+    }
+
+    public function getByDocument($document)
+    {
+        $professor = External::where('document_number', $document)->first();
+        return response()->json($professor);
+    }
 }

@@ -34,6 +34,21 @@ class Student extends Model
         'updated_at'
     ];
 
+    protected $appends = [
+        'full_name',
+        'career_name'
+    ];
+
+    public function getCareerNameAttribute()
+    {
+        return Career::where('code', $this->attributes['career_code'])->first()->name;
+    }
+
+    public function getFullNameAttribute()
+    {
+        return $this->attributes['name'] . ' ' . $this->attributes['paternal_surname'] . ' ' . $this->attributes['maternal_surname'];
+    }
+
     public function scopeActive($query)
     {
         return $query->where('status', true);

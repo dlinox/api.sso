@@ -11,6 +11,7 @@ class Professor extends Model
 
     protected $fillable = [
         'name',
+        'code',
         'paternal_surname',
         'maternal_surname',
         'document_type',
@@ -18,7 +19,8 @@ class Professor extends Model
         'birthdate',
         'phone_number',
         'career_code',
-        'professor_code',
+        'condition_id',
+        'position_id',
         'email',
         'gender',
         'status'
@@ -33,6 +35,27 @@ class Professor extends Model
         'created_at',
         'updated_at'
     ];
+
+    protected $appends = [
+        'career_name',
+        // 'condition_name',
+        // 'position_name'
+    ];
+
+    public function getCareerNameAttribute()
+    {
+        return $this->attributes['career_code'] ? Career::where('code', $this->attributes['career_code'])->first()->name : null;
+    }
+
+    // public function getConditionNameAttribute()
+    // {
+    //     return $this->condition_id ? Condition::find($this->condition_id)->name : null;
+    // }
+
+    // public function getPositionNameAttribute()
+    // {
+    //     return $this->position_id ? Position::find($this->position_id)->name : null;
+    // }
 
     public function scopeActive($query)
     {
