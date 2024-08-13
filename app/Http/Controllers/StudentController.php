@@ -132,9 +132,7 @@ class StudentController extends Controller
     public function receiveStudent(Request $request,  $document)
     {
         $student = Student::where('document_number', $document)->exists();
-
         if (!$student) {
-
             $student  = Student::create([
                 'name' => $request->name,
                 'paternal_surname' => $request->paternal_surname,
@@ -144,7 +142,6 @@ class StudentController extends Controller
                 'career_code' => $request->career_code,
                 'student_code' => $request->student_code,
             ]);
-
             return response()->json(true);
         }
         return response()->json($student);

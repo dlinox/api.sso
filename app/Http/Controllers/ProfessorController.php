@@ -136,6 +136,7 @@ class ProfessorController extends Controller
     {
         $professors = Professor::where('document_number', 'like', '%' . $term . '%')
             ->orWhereRaw("CONCAT_WS(' ', name, paternal_surname, maternal_surname) like '%$term%'")
+            ->limit(10)
             ->get();
         return response()->json($professors);
     }

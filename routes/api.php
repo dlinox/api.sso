@@ -62,7 +62,7 @@ Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'students'], function 
     //items
     Route::post('/items', [StudentController::class, 'items']);
 
-    
+
     Route::get('/', [StudentController::class, 'index'])->middleware('can:students');
     Route::post('/', [StudentController::class, 'store'])->middleware('can:students.create');
     Route::put('/{student}', [StudentController::class, 'update'])->middleware('can:students.update');
@@ -70,6 +70,9 @@ Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'students'], function 
     Route::post('/receive/{document}', [StudentController::class, 'receiveStudent']);
     Route::get('/by-document/{document}', [StudentController::class, 'getByDocument']);
 });
+
+
+
 
 Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'workers'], function () {
 
@@ -119,8 +122,26 @@ Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'roles'], function () 
 });
 
 Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'attentions'], function () {
+
+    Route::post('/student/receive/{document}', [StudentController::class, 'receiveStudent']);
+    Route::get('/student/by-document/{document}', [StudentController::class, 'getByDocument']);
+
+    Route::get('/professor/search/{term}', [ProfessorController::class, 'search']);
+    ///attentions/professor/by-document/
+    Route::get('/professor/by-document/{document}', [ProfessorController::class, 'getByDocument']);
+
+    ///attentions/worker/by-document/
+    Route::get('/worker/search/{term}', [WorkerController::class, 'search']);
+    Route::get('/worker/by-document/{document}', [WorkerController::class, 'getByDocument']);
+
+    //getTodayAttentions
+    Route::get('/today', [AttentionController::class, 'getTodayAttentions']);
+
+
+
     Route::get('/', [AttentionController::class, 'index']);
     Route::get('/last', [AttentionController::class, 'last']);
+
     Route::post('/{type}', [AttentionController::class, 'store']);
     //report 
     Route::get('/report', [AttentionController::class, 'report']);
@@ -132,8 +153,8 @@ Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'attentions'], functio
 
 Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'selects'], function () {
     Route::get('/offices', [OfficeController::class, 'forSelect']);
-    Route::get('/roles', [RoleController::class, 'forSelect']);  
-    // Route::get('/type-attentions', [TypeAttentionController::class, 'forSelect']);
+    Route::get('/roles', [RoleController::class, 'forSelect']);
+    Route::get('/type-attentions', [TypeAttentionController::class, 'forSelect']);
     // Route::get('/professors', [ProfessorController::class, 'forSelect']);
     // Route::get('/students', [StudentController::class, 'forSelect']);
     // Route::get('/workers', [WorkerController::class, 'forSelect']);

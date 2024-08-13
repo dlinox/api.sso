@@ -98,5 +98,9 @@ class TypeAttentionController extends Controller
         return response()->json($typeAttentions);
     }
 
-    
+    public function forSelect()
+    {
+        $typeAttentions = TypeAttention::select('id as value', 'name as title')->active()->get();
+        return response()->json($typeAttentions);
+    }
 }

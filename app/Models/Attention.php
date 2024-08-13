@@ -83,4 +83,15 @@ class Attention extends Model
     {
         return $query->orderBy('attentions.created_at', 'desc');
     }
+    
+    public function scopeToday($query)
+    {
+        return $query->whereDate('attentions.created_at', now());
+    }
+
+    //al tener un relacion polimorfica con person_id y person_type
+    //yna consulta para obtener el nombre de la persona y su carrera u oficina segun el tipo de persona
+
+
+
 }

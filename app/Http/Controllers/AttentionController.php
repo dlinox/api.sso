@@ -3,20 +3,69 @@
 namespace App\Http\Controllers;
 
 use App\Models\Attention;
+use App\Models\Career;
 use App\Models\External;
 use App\Models\Office;
 use App\Models\Professor;
 use App\Models\Student;
 use App\Models\Worker;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class AttentionController extends Controller
 {
 
+    protected $attention;
+
+    public function __construct()
+    {
+        $this->attention = new Attention();
+    }
+
     public function index()
     {
         $attentions = Attention::latest()->get();
+        return response()->json($attentions);
+    }
+
+    public function getTodayAttentions()
+    {
+        $query = $this->attention->query();
+
+        if (Auth::user()->office_id) {
+            $query->where('attentions.user_id', Auth::user()->id);
+        }
+
+        $query->today();
+
+        $query->select(
+            'attentions.id',
+            'attentions.report_number',
+            'attentions.person_id',
+            'attentions.person_type',
+            'type_attentions.name as type_attention_name',
+            'attentions.created_at'
+        )
+            ->join('type_attentions', 'type_attentions.id', '=', 'attentions.type_attention_id')
+            ->orderBy('attentions.created_at', 'desc');
+
+        $attentions = $query->get()->map(function ($attention) {
+            if ($attention->person_type == '001') {
+                $attention->person_name = Student::select(DB::raw("CONCAT_WS(' ', name, paternal_surname) as name"))->where('id', $attention->person_id)->first()->name;
+                $attention->unit_name = Career::select('name')->where('code', Student::select('career_code')->where('id', $attention->person_id)->first()->career_code)->first()->name;
+            } else if ($attention->person_type == '002') {
+                $attention->person_name = Professor::select(DB::raw("CONCAT(name,' ',paternal_surname) as name"))->where('id', $attention->person_id)->first()->name;
+                $attention->unit_name = Career::select('name')->where('code', Professor::select('career_code')->where('id', $attention->person_id)->first()->career_code)->first()->name;
+            } else if ($attention->person_type == '003') {
+                $attention->person_name = Worker::select(DB::raw("CONCAT(name,' ',paternal_surname) as name"))->where('id', $attention->person_id)->first()->name;
+                $attention->unit_name = Office::select('name')->where('id', Worker::select('office_id')->where('id', $attention->person_id)->first()->office_id)->first()->name;
+            } else if ($attention->person_type == '004') {
+                $attention->person_name = External::select(DB::raw("CONCAT(name,' ',paternal_surname) as name"))->where('id', $attention->person_id)->first()->name;
+                $attention->unit_name = 'Externo';
+            }
+            return $attention;
+        });
         return response()->json($attentions);
     }
 
@@ -55,7 +104,6 @@ class AttentionController extends Controller
 
         return response()->json($attentions);
     }
-
     public function last()
     {
         $attentions = Attention::select(
@@ -106,7 +154,7 @@ class AttentionController extends Controller
         );
         try {
             $request['person_type'] = $type;
-            $request['user_id'] = auth()->user()->id;
+            $request['user_id'] = Auth::user()->id;
             $request['derivations'] = implode(',', $request->derivate_to);
             $attention = Attention::create($request->only('report_number', 'description', 'derivations', 'person_id', 'type_attention_id', 'user_id', 'person_type'));
             return response()->json($attention);
