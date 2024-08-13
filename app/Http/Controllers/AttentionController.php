@@ -15,12 +15,77 @@ use Illuminate\Support\Facades\DB;
 
 class AttentionController extends Controller
 {
-
+/*
+SELECT 
+    attentions.id,
+    attentions.report_number,
+    attentions.person_id,
+    attentions.person_type,
+    CASE
+        WHEN attentions.person_type = '001' THEN 
+            (SELECT CONCAT_WS(' ', s.name, s.paternal_surname) FROM students s WHERE s.id = attentions.person_id)
+        WHEN attentions.person_type = '002' THEN 
+            (SELECT CONCAT_WS(' ', p.name, p.paternal_surname) FROM professors p WHERE p.id = attentions.person_id)
+        WHEN attentions.person_type = '003' THEN 
+            (SELECT CONCAT_WS(' ', w.name, w.paternal_surname) FROM workers w WHERE w.id = attentions.person_id)
+        WHEN attentions.person_type = '004' THEN 
+            (SELECT CONCAT_WS(' ', e.name, e.paternal_surname) FROM externals e WHERE e.id = attentions.person_id)
+    END AS person_name,
+    CASE
+        WHEN attentions.person_type = '001' THEN 
+            (SELECT c.name FROM careers c WHERE c.code = (SELECT s.career_code FROM students s WHERE s.id = attentions.person_id))
+        WHEN attentions.person_type = '002' THEN 
+            (SELECT c.name FROM careers c WHERE c.code = (SELECT p.career_code FROM professors p WHERE p.id = attentions.person_id))
+        WHEN attentions.person_type = '003' THEN 
+            (SELECT o.name FROM offices o WHERE o.id = (SELECT w.office_id FROM workers w WHERE w.id = attentions.person_id))
+        WHEN attentions.person_type = '004' THEN 'Externo'
+    END AS unit_name,
+    type_attentions.name AS type_attention_name,
+    attentions.created_at
+FROM 
+    attentions
+JOIN 
+    type_attentions ON type_attentions.id = attentions.type_attention_id;
+*/
     protected $attention;
 
     public function __construct()
     {
         $this->attention = new Attention();
+    }
+
+
+    public function items(Request $request)
+    {
+
+        $query = $this->attention->query();
+
+        if ($request->has('search')) {
+            $query->where('name', 'like', '%' . $request->search . '%');
+        }
+
+        // Filtros dinámicos
+        if ($request->has('filters') && is_array($request->filters)) {
+            foreach ($request->filters as $filter => $value) {
+                // Aquí puedes agregar validaciones adicionales según sea necesario
+                if (!is_null($value)) {
+                    $query->where($filter, $value);
+                }
+            }
+        }
+
+        if ($request->has('sortBy') && is_array($request->sortBy)) {
+            foreach ($request->sortBy as $sort) {
+                $query->orderBy($sort['key'], $sort['order']);
+            }
+        }
+
+        $perPage = $request->itemsPerPage == -1
+            ? $query->count()
+            : ($request->itemsPerPage ?? 10);
+
+        $items = $query->latest()->paginate($perPage);
+        return response()->json($items);
     }
 
     public function index()
