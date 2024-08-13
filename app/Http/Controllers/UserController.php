@@ -10,6 +10,47 @@ use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
+
+    protected $user;
+
+    public function __construct()
+    {
+        $this->user = new User();
+    }
+
+    public function items(Request $request)
+    {
+
+        $query = $this->user->query();
+
+        if ($request->has('search')) {
+            $query->where('name', 'like', '%' . $request->search . '%');
+        }
+
+        // Filtros dinámicos
+        if ($request->has('filters') && is_array($request->filters)) {
+            foreach ($request->filters as $filter => $value) {
+                // Aquí puedes agregar validaciones adicionales según sea necesario
+                if (!is_null($value)) {
+                    $query->where($filter, $value);
+                }
+            }
+        }
+
+        if ($request->has('sortBy') && is_array($request->sortBy)) {
+            foreach ($request->sortBy as $sort) {
+                $query->orderBy($sort['key'], $sort['order']);
+            }
+        }
+
+        $perPage = $request->itemsPerPage == -1
+            ? $query->count()
+            : ($request->itemsPerPage ?? 10);
+
+        $offices = $query->latest()->paginate($perPage);
+        return response()->json($offices);
+    }
+
     public function index()
     {
         $professors = User::latest()->get();
@@ -35,7 +76,7 @@ class UserController extends Controller
                 'name' => 'required|string|max:255',
                 'paternal_surname' =>  'required|max:255',
                 'maternal_surname' => 'required|max:255',
-                'document_type' => 'required|max:3',
+                // 'document_type' => 'required|max:3',
                 'document_number' =>  'required|max:20',
                 'email' => 'required|email|max:255|unique:users',
                 'password' => 'required',
@@ -47,7 +88,7 @@ class UserController extends Controller
                 'name.required' => 'El nombre es obligatorio',
                 'paternal_surname.required' => 'El apellido paterno es obligatorio',
                 'maternal_surname.required' => 'El apellido materno es obligatorio',
-                'document_type.required' => 'El tipo de documento es obligatorio',
+                // 'document_type.required' => 'El tipo de documento es obligatorio',
                 'document_number.required' => 'El número de documento es obligatorio',
                 'email.required' => 'El correo electrónico es obligatorio',
                 'role_id.required' => 'El rol es obligatorio',
@@ -57,7 +98,7 @@ class UserController extends Controller
         );
         try {
             DB::beginTransaction();
-            $user = User::create($request->only('name', 'paternal_surname', 'maternal_surname', 'document_type', 'document_number', 'email', 'password', 'office_id', 'status'));
+            $user = User::create($request->only('name', 'paternal_surname', 'maternal_surname',  'document_number', 'email', 'password', 'office_id', 'status'));
             $user->assignRole($request->role_id);
             DB::commit();
             return response()->json($user);

@@ -25,6 +25,9 @@ Route::group(['prefix' => 'auth'], function () {
 
 
 Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'offices'], function () {
+
+    Route::post('/items', [OfficeController::class, 'items']);
+
     Route::get('/', [OfficeController::class, 'index'])->middleware('can:offices');
     Route::post('/', [OfficeController::class, 'store'])->middleware('can:offices.create');
     Route::put('/{office}', [OfficeController::class, 'update'])->middleware('can:offices.update');
@@ -33,6 +36,9 @@ Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'offices'], function (
 });
 
 Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'types-attention'], function () {
+
+    Route::post('/items', [TypeAttentionController::class, 'items']);
+
     Route::get('/', [TypeAttentionController::class, 'index'])->middleware('can:type-attentions');
     Route::post('/', [TypeAttentionController::class, 'store'])->middleware('can:type-attentions.create');
     Route::put('/{typeAttention}', [TypeAttentionController::class, 'update'])->middleware('can:type-attentions.update');
@@ -41,6 +47,9 @@ Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'types-attention'], fu
 });
 
 Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'professors'], function () {
+
+    Route::post('/items', [ProfessorController::class, 'items']);
+
     Route::get('/', [ProfessorController::class, 'index'])->middleware('can:professors');
     Route::post('/', [ProfessorController::class, 'store'])->middleware('can:professors.create');
     Route::put('/{professor}', [ProfessorController::class, 'update'])->middleware('can:professors.update');
@@ -49,6 +58,11 @@ Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'professors'], functio
 });
 
 Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'students'], function () {
+
+    //items
+    Route::post('/items', [StudentController::class, 'items']);
+
+    
     Route::get('/', [StudentController::class, 'index'])->middleware('can:students');
     Route::post('/', [StudentController::class, 'store'])->middleware('can:students.create');
     Route::put('/{student}', [StudentController::class, 'update'])->middleware('can:students.update');
@@ -58,6 +72,9 @@ Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'students'], function 
 });
 
 Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'workers'], function () {
+
+    Route::post('/items', [WorkerController::class, 'items']);
+
     Route::get('/', [WorkerController::class, 'index'])->middleware('can:workers');
     Route::post('/', [WorkerController::class, 'store'])->middleware('can:workers.create');
     Route::put('/{worker}', [WorkerController::class, 'update'])->middleware('can:workers.update');
@@ -78,6 +95,10 @@ Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'externals'], function
 });
 
 Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'users'], function () {
+
+    //items
+    Route::post('/items', [UserController::class, 'items']);
+
     Route::get('/', [UserController::class, 'index'])->middleware('can:users');
     Route::post('/', [UserController::class, 'store'])->middleware('can:users.create');
     Route::put('/{user}', [UserController::class, 'update'])->middleware('can:users.update');
@@ -86,6 +107,10 @@ Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'users'], function () 
 });
 
 Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'roles'], function () {
+
+    //imtes
+    Route::post('/items', [RoleController::class, 'items']);
+
     Route::get('/', [RoleController::class, 'index'])->middleware('can:roles');
     Route::post('/', [RoleController::class, 'store'])->middleware('can:roles.create');
     Route::put('/{role}', [RoleController::class, 'update'])->middleware('can:roles.update');
@@ -102,4 +127,15 @@ Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'attentions'], functio
     //offices
     Route::get('/offices', [AttentionController::class, 'offices']);
     // Route::put('/{attention}', [AttentionController::class, 'update'])->middleware('can:attentions.update');
+});
+
+
+Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'selects'], function () {
+    Route::get('/offices', [OfficeController::class, 'forSelect']);
+    Route::get('/roles', [RoleController::class, 'forSelect']);  
+    // Route::get('/type-attentions', [TypeAttentionController::class, 'forSelect']);
+    // Route::get('/professors', [ProfessorController::class, 'forSelect']);
+    // Route::get('/students', [StudentController::class, 'forSelect']);
+    // Route::get('/workers', [WorkerController::class, 'forSelect']);
+    // Route::get('/externals', [ExternalController::class, 'forSelect']);
 });

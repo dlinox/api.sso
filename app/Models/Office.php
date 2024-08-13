@@ -47,4 +47,10 @@ class Office extends Model
     {
         return $query->orderBy('created_at', 'asc');
     }
+
+    // scope for Select
+    public function scopeForSelect($query)
+    {
+        return $query->select('id as value', 'name as title');
+    }
 }

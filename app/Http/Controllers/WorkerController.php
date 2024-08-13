@@ -8,6 +8,45 @@ use Illuminate\Http\Request;
 
 class WorkerController extends Controller
 {
+    protected $worker;
+
+    public function __construct()
+    {
+        $this->worker = new Worker();
+    }
+
+    public function items(Request $request)
+    {
+
+        $query = $this->worker->query();
+
+        if ($request->has('search')) {
+            $query->where('name', 'like', '%' . $request->search . '%');
+        }
+
+        // Filtros dinámicos
+        if ($request->has('filters') && is_array($request->filters)) {
+            foreach ($request->filters as $filter => $value) {
+                // Aquí puedes agregar validaciones adicionales según sea necesario
+                if (!is_null($value)) {
+                    $query->where($filter, $value);
+                }
+            }
+        }
+
+        if ($request->has('sortBy') && is_array($request->sortBy)) {
+            foreach ($request->sortBy as $sort) {
+                $query->orderBy($sort['key'], $sort['order']);
+            }
+        }
+
+        $perPage = $request->itemsPerPage == -1
+            ? $query->count()
+            : ($request->itemsPerPage ?? 10);
+
+        $items = $query->latest()->paginate($perPage);
+        return response()->json($items);
+    }
 
     public function index()
     {
