@@ -15,38 +15,6 @@ use Illuminate\Support\Facades\DB;
 
 class AttentionController extends Controller
 {
-/*
-SELECT 
-    attentions.id,
-    attentions.report_number,
-    attentions.person_id,
-    attentions.person_type,
-    CASE
-        WHEN attentions.person_type = '001' THEN 
-            (SELECT CONCAT_WS(' ', s.name, s.paternal_surname) FROM students s WHERE s.id = attentions.person_id)
-        WHEN attentions.person_type = '002' THEN 
-            (SELECT CONCAT_WS(' ', p.name, p.paternal_surname) FROM professors p WHERE p.id = attentions.person_id)
-        WHEN attentions.person_type = '003' THEN 
-            (SELECT CONCAT_WS(' ', w.name, w.paternal_surname) FROM workers w WHERE w.id = attentions.person_id)
-        WHEN attentions.person_type = '004' THEN 
-            (SELECT CONCAT_WS(' ', e.name, e.paternal_surname) FROM externals e WHERE e.id = attentions.person_id)
-    END AS person_name,
-    CASE
-        WHEN attentions.person_type = '001' THEN 
-            (SELECT c.name FROM careers c WHERE c.code = (SELECT s.career_code FROM students s WHERE s.id = attentions.person_id))
-        WHEN attentions.person_type = '002' THEN 
-            (SELECT c.name FROM careers c WHERE c.code = (SELECT p.career_code FROM professors p WHERE p.id = attentions.person_id))
-        WHEN attentions.person_type = '003' THEN 
-            (SELECT o.name FROM offices o WHERE o.id = (SELECT w.office_id FROM workers w WHERE w.id = attentions.person_id))
-        WHEN attentions.person_type = '004' THEN 'Externo'
-    END AS unit_name,
-    type_attentions.name AS type_attention_name,
-    attentions.created_at
-FROM 
-    attentions
-JOIN 
-    type_attentions ON type_attentions.id = attentions.type_attention_id;
-*/
     protected $attention;
 
     public function __construct()
@@ -85,6 +53,46 @@ JOIN
             : ($request->itemsPerPage ?? 10);
 
         $items = $query->latest()->paginate($perPage);
+        return response()->json($items);
+    }
+
+    public function itemsStudents(Request $request, $type)
+    {
+        $query = DB::table('attentions_view');
+
+        if (Auth::user()->office_id) {
+            $query->where('user_id', Auth::user()->id);
+        }
+
+        $query->where('person_type', $type);
+
+        if ($request->has('search')) {
+            $query->where('person_name', 'like', '%' . $request->search . '%');
+        }
+        // Filtros dinámicos
+        if ($request->has('filters') && is_array($request->filters)) {
+            foreach ($request->filters as $filter => $value) {
+                // Aquí puedes agregar validaciones adicionales según sea necesario
+                if (!is_null($value)) {
+                    $query->where($filter, $value);
+                }
+            }
+        }
+
+        if ($request->has('sortBy') && is_array($request->sortBy)) {
+            foreach ($request->sortBy as $sort) {
+                $query->orderBy($sort['key'], $sort['order']);
+            }
+        }
+
+        $perPage = $request->itemsPerPage == -1
+            ? $query->count()
+            : ($request->itemsPerPage ?? 10);
+
+
+
+        $items = $query->paginate($perPage);
+
         return response()->json($items);
     }
 
@@ -227,6 +235,42 @@ JOIN
             return response()->json($e->getMessage());
         }
     }
+
+    public function update(Request $request)
+    {
+        $request->validate(
+            [
+                'report_number' => 'required|max:255',
+                'description' => 'required',
+                'person_id' => 'required|integer',
+                'type_attention_id' => 'required|integer',
+            ],
+            [
+                'report_number.required' => 'El número de reporte es obligatorio',
+                'description.required' => 'La descripción es obligatoria',
+                'type_attention_id.required' => 'El tipo de atención es obligatorio',
+            ]
+        );
+        try {
+            $attention = Attention::find($request->id);
+            $attention->update($request->only('report_number', 'description', 'person_id', 'type_attention_id'));
+            return response()->json($attention);
+        } catch (\Exception $e) {
+            return response()->json($e->getMessage());
+        }
+    }
+
+    //getAtencion per perosn an user
+    public function getAttentionByPerson($document)
+    {
+        $user = Auth::user();
+        $attentions = DB::table('attentions_view')
+            ->where('person_document', $document)
+            ->where('user_id', $user->id)
+            ->get();
+        return response()->json($attentions);
+    }
+
 
     public function offices()
     {

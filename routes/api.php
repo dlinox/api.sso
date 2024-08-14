@@ -123,6 +123,9 @@ Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'roles'], function () 
 
 Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'attentions'], function () {
 
+    //itemsStudent
+    Route::post('/items-students/{type}', [AttentionController::class, 'itemsStudents']);
+
     Route::post('/student/receive/{document}', [StudentController::class, 'receiveStudent']);
     Route::get('/student/by-document/{document}', [StudentController::class, 'getByDocument']);
 
@@ -134,6 +137,9 @@ Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'attentions'], functio
     Route::get('/worker/search/{term}', [WorkerController::class, 'search']);
     Route::get('/worker/by-document/{document}', [WorkerController::class, 'getByDocument']);
 
+    //getAttentionByPerson
+    Route::get('/history/{document}', [AttentionController::class, 'getAttentionByPerson']);
+
     //getTodayAttentions
     Route::get('/today', [AttentionController::class, 'getTodayAttentions']);
 
@@ -143,6 +149,8 @@ Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'attentions'], functio
     Route::get('/last', [AttentionController::class, 'last']);
 
     Route::post('/{type}', [AttentionController::class, 'store']);
+
+    Route::put('/', [AttentionController::class, 'update']);
     //report 
     Route::get('/report', [AttentionController::class, 'report']);
     //offices
