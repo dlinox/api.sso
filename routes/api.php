@@ -5,6 +5,7 @@ use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\ExternalController;
 use App\Http\Controllers\OfficeController;
 use App\Http\Controllers\ProfessorController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\TypeAttentionController;
@@ -167,4 +168,12 @@ Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'selects'], function (
     // Route::get('/students', [StudentController::class, 'forSelect']);
     // Route::get('/workers', [WorkerController::class, 'forSelect']);
     // Route::get('/externals', [ExternalController::class, 'forSelect']);
+});
+
+
+Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'reports'], function () {
+
+    Route::get('/attentions-by-month/{year}', [ReportController::class, 'attentionsByMonth']);
+    //attentionsByMonthType
+    Route::get('/attentions-by-month-type/{year}', [ReportController::class, 'attentionsByMonthType']);
 });
