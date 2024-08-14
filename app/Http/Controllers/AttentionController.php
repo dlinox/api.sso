@@ -113,12 +113,12 @@ class AttentionController extends Controller
         $query->today();
 
         $query->select(
-            'attentions.id',
-            'attentions.report_number',
-            'attentions.person_id',
-            'attentions.person_type',
+            'attentions.*',
+            //un campo is editabele solo si an pasao menos de 1 minuto true o false
+            DB::raw(' If(TIMESTAMPDIFF(SECOND, attentions.created_at, NOW()) > 60 , false, true )  as editable'),
+            //la hora actual
+            DB::raw('NOW() as now'),
             'type_attentions.name as type_attention_name',
-            'attentions.created_at'
         )
             ->join('type_attentions', 'type_attentions.id', '=', 'attentions.type_attention_id')
             ->orderBy('attentions.created_at', 'desc');

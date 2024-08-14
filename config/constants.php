@@ -8,6 +8,43 @@ return [
             'actions' => [],
         ],
         [
+            'name' => 'attentions',
+            'description' => 'Atenciónes',
+            'type' => '001',
+            'actions' => [
+                [
+                    'name' => 'attentions.report',
+                    'description' => 'Ver reporte de atenciónes',
+                    'type' => '002',
+                ],
+                [
+                    'name' => 'attentions.student',
+                    'description' => 'Atenciónes - Estudiante',
+                    'type' => '002',
+                ],
+                [
+                    'name' => 'attentions.professor',
+                    'description' => 'Atenciónes - Profesor',
+                    'type' => '002',
+                ],
+                [
+                    'name' => 'attentions.worker',
+                    'description' => 'Atenciónes - Trabajador(Administrativo/CAS/Obras)',
+                    'type' => '002',
+                ],
+                [
+                    'name' => 'attentions.edit-temporal',
+                    'description' => 'Atenciónes - Editar temporal',
+                    'type' => '002',
+                ],
+                [
+                    'name' => 'attentions.edit',
+                    'description' => 'Atenciónes - Editar',
+                    'type' => '002',
+                ],
+            ],
+        ],
+        [
             'name' => 'users',
             'description' => 'Usuarios',
             'type' => '001',
