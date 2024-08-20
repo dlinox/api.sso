@@ -40,7 +40,7 @@ class UserSeeder extends Seeder
             }
         }
 
-        $roleSuperAdmin = Role::create(['name' => 'super']);
+        $roleSuperAdmin = Role::create(['name' => 'super', 'is_super' => true]);
         $roleSuperAdmin->givePermissionTo(Permission::all());
 
         $super = User::create([

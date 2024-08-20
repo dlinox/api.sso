@@ -36,7 +36,23 @@ class Attention extends Model
 
     protected $appends = [
         'person_type_name',
+        'derivate_to',
     ];
+
+    public function getDerivateToAttribute()
+    {
+        if (isset($this->attributes['derivations'])) {
+            // $derivations = json_decode($this->attributes['derivations']);
+            $derivate_to = explode(',', $this->attributes['derivations']);
+
+            $derivate_to = array_map(function ($item) {
+                return (int) $item;
+            }, $derivate_to);
+
+            return $derivate_to;
+        }
+        return false;
+    }
 
     public function getPersonTypeNameAttribute()
     {
@@ -88,6 +104,7 @@ class Attention extends Model
     {
         return $query->whereDate('attentions.created_at', now());
     }
+
 
     //al tener un relacion polimorfica con person_id y person_type
     //yna consulta para obtener el nombre de la persona y su carrera u oficina segun el tipo de persona

@@ -6,6 +6,7 @@ use App\Models\Office;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
@@ -24,8 +25,13 @@ class UserController extends Controller
         $query = $this->user->query();
 
         if ($request->has('search')) {
-            $query->where('name', 'like', '%' . $request->search . '%');
+            $query->where('name', 'like', '%' . $request->search . '%')
+                ->orWhere('paternal_surname', 'like', '%' . $request->search . '%')
+                ->orWhere('maternal_surname', 'like', '%' . $request->search . '%')
+                ->orWhere('document_number', 'like', '%' . $request->search . '%')
+                ->orWhere('email', 'like', '%' . $request->search . '%');
         }
+
 
         // Filtros dinámicos
         if ($request->has('filters') && is_array($request->filters)) {
@@ -51,23 +57,23 @@ class UserController extends Controller
         return response()->json($offices);
     }
 
-    public function index()
-    {
-        $professors = User::latest()->get();
-        return response()->json($professors);
-    }
-
+    /* delete this methods
     public function offices()
     {
-        $professors = Office::select('id', 'name')->latest()->active()->get();
-        return response()->json($professors);
+        $items = Office::select('id', 'name')->latest()->active()->get();
+        return response()->json($items);
     }
 
     public function roles()
     {
-        $professors = Role::select('id', 'name')->latest()->get();
-        return response()->json($professors);
-    }
+        if (Auth::user()->hasRole('super')) {
+            $items = Role::select('id', 'name')->latest()->get();
+        } else {
+            $items = Role::select('id', 'name')->latest()->notSuper()->get();
+        }
+        
+        return response()->json($items);
+    }*/
 
     public function store(Request $request)
     {
@@ -147,7 +153,4 @@ class UserController extends Controller
             return response()->json($e->getMessage());
         }
     }
-    
-
-    
 }

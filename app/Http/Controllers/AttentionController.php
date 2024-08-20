@@ -64,10 +64,14 @@ class AttentionController extends Controller
             $query->where('user_id', Auth::user()->id);
         }
 
-        $query->where('person_type', $type);
+        if ($type !== '000') {
+            $query->where('person_type', $type);
+        }
 
         if ($request->has('search')) {
-            $query->where('person_name', 'like', '%' . $request->search . '%');
+            $query->where('person_name', 'like', '%' . $request->search . '%')
+                ->orWhere('person_document',  'like', '%' . $request->search . '%')
+                ->orWhere('person_code',  'like', '%' . $request->search . '%');
         }
         // Filtros dinámicos
         if ($request->has('filters') && is_array($request->filters)) {
@@ -281,5 +285,16 @@ class AttentionController extends Controller
             ->groupBy('offices.name')
             ->get();
         return response()->json($offices);
+    }
+
+    public function delete($id)
+    {
+        try {
+            $attention = Attention::find($id);
+            $attention->delete();
+            return response()->json($attention);
+        } catch (\Exception $e) {
+            return response()->json($e->getMessage());
+        }
     }
 }

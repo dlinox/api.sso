@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Role;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Permission;
 
@@ -26,6 +27,7 @@ class RoleController extends Controller
         if ($request->has('search')) {
             $query->where('name', 'like', '%' . $request->search . '%');
         }
+
 
         // Filtros dinámicos
         if ($request->has('filters') && is_array($request->filters)) {
@@ -59,9 +61,6 @@ class RoleController extends Controller
 
         return response()->json($offices);
     }
-
-
-
 
     public function index()
     {

@@ -144,6 +144,9 @@ Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'attentions'], functio
     //getTodayAttentions
     Route::get('/today', [AttentionController::class, 'getTodayAttentions']);
 
+    //delete
+    Route::delete('/{id}', [AttentionController::class, 'delete']);
+
 
 
     Route::get('/', [AttentionController::class, 'index']);
