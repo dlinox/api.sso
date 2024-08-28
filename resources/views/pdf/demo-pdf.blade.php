@@ -68,6 +68,15 @@
         .pagenum::before {
             content: counter(page);
         }
+
+        .total-pages::before {
+            content: counter(pages);
+        }
+
+        /* Salto de página */
+        .page-break {
+            page-break-after: always;
+        }
     </style>
 </head>
 
@@ -105,16 +114,16 @@
             </thead>
             <tbody>
                 @foreach ($data as $index => $val)
-                <tr>
-                    <td>{{ $index + 1 }}</td>
-                    <td>{{ $val['report_number'] }}</td>
-                    <td>{{ $val['person_name'] }}</td>
-                    <td>{{ $val['person_document'] }}</td>
-                    <td>{{ $val['person_code'] }}</td>
-                    <td>{{ $val['unit_name'] }}</td>
-                    <td>{{ $val['type_attention_name'] }}</td>
-                    <td>{{ $val['created_at'] }}</td>
-                </tr>
+                    <tr>
+                        <td>{{ $index + 1 }}</td>
+                        <td>{{ $val['report_number'] }}</td>
+                        <td>{{ $val['person_name'] }}</td>
+                        <td>{{ $val['person_document'] }}</td>
+                        <td>{{ $val['person_code'] }}</td>
+                        <td>{{ $val['unit_name'] }}</td>
+                        <td>{{ $val['type_attention_name'] }}</td>
+                        <td>{{ $val['created_at'] }}</td>
+                    </tr>
                 @endforeach
             </tbody>
         </table>
@@ -125,19 +134,12 @@
         Página <span class="pagenum"></span> de <span class="total-pages"></span>
     </div>
 
-    <!-- Script para contar páginas -->
     <script type="text/php">
-        if (isset($pdf)) {
-            $pdf->page_script('
-                $font = $fontMetrics->get_font("Arial, Helvetica, sans-serif", "normal");
-                $size = 12;
-                $pageText = "Página " . $PAGE_NUM . " de " . $PAGE_COUNT;
-                $y = 820;  // Posición del pie de página más cercana al borde
-                $x = 270;  // Posición centrada para el texto
-                $pdf->text($x, $y, $pageText, $font, $size);
-            ');
-        }
-    </script>
+    if ( isset($pdf) ) {
+        $font = Font_Metrics::get_font("helvetica", "bold");
+        $pdf->page_text(72, 18, "Header: {PAGE_NUM} of {PAGE_COUNT}", $font, 6, array(0,0,0));
+    }
+</script>
 
 </body>
 

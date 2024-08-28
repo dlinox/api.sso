@@ -7,6 +7,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Mpdf\Mpdf;
 
 class ReportController extends Controller
 {
@@ -72,8 +73,8 @@ class ReportController extends Controller
         $monthlyCountsByPersonType = [];
         foreach ($results as $result) {
             $personType = $result->person_type;
-            $month = (int)$result->month;
-            $count = (int)$result->counts;
+            $month = (int) $result->month;
+            $count = (int) $result->counts;
             if (!isset($monthlyCountsByPersonType[$personType])) {
                 $monthlyCountsByPersonType[$personType] = array_fill(1, 12, 0);
             }
@@ -91,15 +92,34 @@ class ReportController extends Controller
     {
 
         try {
+            $mpdf = new Mpdf([
+                'mode' => 'utf-8',
+                'format' => 'A4',
+                'orientation' => 'P',
+                'margin_top' => 40,
+                'margin_bottom' => 15,
+            ]);
 
             $data = [
-                'data' => $request->all()
+                'data' => $request->all(),
             ];
 
-            $pdf = Pdf::loadView('pdf.demo-pdf', $data);
-            return $pdf->stream();
-        } catch (Exception $error) {
-            return $error->getMessage();
+            $content = view('pdf.attentions.content', $data)->render() . PHP_EOL;
+            //_header
+            $header = view('pdf.attentions._header')->render() . PHP_EOL;
+            //_footer
+            $footer = view('pdf.attentions._footer')->render() . PHP_EOL;
+
+            $mpdf->SetHeader($header);
+            $mpdf->SetFooter($footer);
+            $mpdf->WriteHTML($content);
+
+            // Enviar el PDF como un archivo de descarga
+            return response($mpdf->Output('reporte.pdf', 'S'), 200)
+                ->header('Content-Type', 'application/pdf')
+                ->header('Content-Disposition', 'attachment; filename="reporte.pdf"');
+        } catch (Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
         }
     }
 }

@@ -69,9 +69,12 @@ class AttentionController extends Controller
         }
 
         if ($request->has('search')) {
-            $query->where('person_name', 'like', '%' . $request->search . '%')
-                ->orWhere('person_document',  'like', '%' . $request->search . '%')
-                ->orWhere('person_code',  'like', '%' . $request->search . '%');
+            $search = $request->search;
+            $query->where(function ($query) use ($search) {
+                $query->where('person_name', 'like', '%' . $search . '%')
+                    ->orWhere('person_document', 'like', '%' . $search . '%')
+                    ->orWhere('person_code', 'like', '%' . $search . '%');
+            });
         }
         // Filtros dinámicos
         if ($request->has('filters') && is_array($request->filters)) {
