@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Attention;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -62,7 +64,6 @@ class ReportController extends Controller
   },
         */
 
-
         $results = DB::table('attentions')
             ->selectRaw('person_type, MONTH(created_at) as month, COUNT(id) as counts')
             ->groupBy('person_type', DB::raw('YEAR(created_at)'), DB::raw('MONTH(created_at)'))
@@ -84,5 +85,21 @@ class ReportController extends Controller
         }
 
         return response()->json($monthlyCountsByPersonType);
+    }
+
+    public function rerportPdf(Request $request)
+    {
+
+        try {
+
+            $data = [
+                'data' => $request->all()
+            ];
+
+            $pdf = Pdf::loadView('pdf.demo-pdf', $data);
+            return $pdf->stream();
+        } catch (Exception $error) {
+            return $error->getMessage();
+        }
     }
 }

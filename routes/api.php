@@ -180,3 +180,7 @@ Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'reports'], function (
     //attentionsByMonthType
     Route::get('/attentions-by-month-type/{year}', [ReportController::class, 'attentionsByMonthType']);
 });
+
+
+
+Route::post('/pdf/report',  [ReportController::class, 'rerportPdf']);
