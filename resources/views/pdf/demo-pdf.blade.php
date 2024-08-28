@@ -11,6 +11,7 @@
             padding: 0;
         }
 
+        /* Cabecera fija */
         .header {
             position: fixed;
             top: 0;
@@ -35,12 +36,12 @@
             text-align: right;
         }
 
+        /* Espacio reservado para la tabla */
         .table-container {
-
-            padding-top: 120px;
-            /* Ajuste para la cabecera */
-            padding-bottom: 60px;
-            /* Ajuste para el pie de página */
+            margin-top: 120px;
+            /* Altura ajustada para dejar espacio a la cabecera */
+            margin-bottom: 60px;
+            /* Espacio reservado para el pie de página */
         }
 
         .table {
@@ -55,12 +56,17 @@
             padding: 5px;
         }
 
+        /* Pie de página fijo */
         .footer {
             position: fixed;
             bottom: 0;
             width: 100%;
             text-align: center;
             font-size: 10px;
+        }
+
+        .pagenum::before {
+            content: counter(page);
         }
     </style>
 </head>
@@ -123,14 +129,12 @@
     <script type="text/php">
         if (isset($pdf)) {
             $pdf->page_script('
-                if ($PAGE_COUNT > 1 || $PAGE_COUNT == 1) {  // Mostrar numeración desde la primera página
-                    $font = $fontMetrics->get_font("Arial, Helvetica, sans-serif", "normal");
-                    $size = 12;
-                    $pageText = "Página " . $PAGE_NUM . " de " . $PAGE_COUNT;
-                    $y = 15;
-                    $x = 520;
-                    $pdf->text($x, $y, $pageText, $font, $size);
-                }
+                $font = $fontMetrics->get_font("Arial, Helvetica, sans-serif", "normal");
+                $size = 12;
+                $pageText = "Página " . $PAGE_NUM . " de " . $PAGE_COUNT;
+                $y = 820;  // Posición del pie de página más cercana al borde
+                $x = 270;  // Posición centrada para el texto
+                $pdf->text($x, $y, $pageText, $font, $size);
             ');
         }
     </script>
