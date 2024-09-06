@@ -59,16 +59,6 @@ return [
                     'description' => 'Usuarios - Crear',
                     'type' => '002',
                 ],
-                [
-                    'name' => 'users.change-password',
-                    'description' => 'Usuarios - Cambiar contraseña',
-                    'type' => '002',
-                ],
-                [
-                    'name' => 'users.assign-roles',
-                    'description' => 'Usuarios - Asignar roles',
-                    'type' => '002',
-                ]
             ]
         ],
         [
@@ -87,11 +77,6 @@ return [
                     'description' => 'Roles - Crear',
                     'type' => '002',
                 ],
-                [
-                    'name' => 'roles.assign-permissions',
-                    'description' => 'Roles - Asignar permisos',
-                    'type' => '002',
-                ]
             ]
         ],
         [

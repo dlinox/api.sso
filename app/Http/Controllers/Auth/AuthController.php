@@ -19,11 +19,17 @@ class AuthController extends Controller
 
         if (!auth()->attempt($request->only('email', 'password'))) {
             return response()->json([
-                'message' => 'Invalid login details'
+                'message' => 'Credenciales incorrectas'
             ], 401);
         }
 
         $user = Auth::user();
+
+        if ($user->status == 0) {
+            return response()->json([
+                'message' => 'Usuario inactivo'
+            ], 401);
+        }
 
         $token = $user->createToken('token')->plainTextToken;
 

@@ -51,13 +51,14 @@ class RoleController extends Controller
             : ($request->itemsPerPage ?? 10);
 
         $query->select('roles.id', 'roles.name', DB::raw('GROUP_CONCAT(role_has_permissions.permission_id) as permissions'))
-            ->leftJoin('role_has_permissions', 'roles.id', '=', 'role_has_permissions.role_id')
-            ->where('role_has_permissions.permission_id', '!=', 1)
+            ->leftJoin('role_has_permissions', function ($join) {
+                $join->on('roles.id', '=', 'role_has_permissions.role_id')
+                    ->where("role_has_permissions.permission_id", '!=', 1);
+            })
             ->groupBy('roles.id');
 
 
         $offices = $query->latest()->paginate($perPage);
-
 
         return response()->json($offices);
     }
@@ -80,7 +81,7 @@ class RoleController extends Controller
 
     public function permissions()
     {
-        $permissions = Permission::select('id as value',  'description as title')->where('id', '!=', 1)->get();
+        $permissions = Permission::select('id as value', DB::raw("concat_ws(' | ', if(type = '001', 'MENU', 'ACCIÓN'), description  ) as title"))->where('id', '!=', 1)->get();
 
         return response()->json($permissions);
     }

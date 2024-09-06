@@ -64,22 +64,16 @@ class Worker extends Model
         switch ($this->attributes['type']) {
             case '001':
                 return 'Administrativo';
-                break;
             case '002':
                 return 'Cas';
-                break;
             case '003':
                 return 'Obrero';
-                break;
             case '004':
                 return 'Profecional de Obra';
-                break;
             case '005':
                 return 'Docente';
-                break;
             default:
                 return 'No definido';
-                break;
         }
     }
     public function scopeActive($query)

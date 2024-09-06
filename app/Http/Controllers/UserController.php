@@ -25,18 +25,21 @@ class UserController extends Controller
         $query = $this->user->query();
 
         if ($request->has('search')) {
-            $query->where('name', 'like', '%' . $request->search . '%')
-                ->orWhere('paternal_surname', 'like', '%' . $request->search . '%')
-                ->orWhere('maternal_surname', 'like', '%' . $request->search . '%')
-                ->orWhere('document_number', 'like', '%' . $request->search . '%')
-                ->orWhere('email', 'like', '%' . $request->search . '%');
-        }
 
+            $search = $request->search;
+            $query->where(function ($query) use ($search) {
+                $query->where('name', 'like', '%' . $search . '%')
+                    ->orWhere('paternal_surname', 'like', '%' . $search . '%')
+                    ->orWhere('maternal_surname', 'like', '%' . $search . '%')
+                    ->orWhere('document_number', 'like', '%' . $search . '%')
+                    ->orWhere('email', 'like', '%' . $search . '%');
+            });
+        }
 
         // Filtros dinámicos
         if ($request->has('filters') && is_array($request->filters)) {
             foreach ($request->filters as $filter => $value) {
-                // Aquí puedes agregar validaciones adicionales según sea necesario
+
                 if (!is_null($value)) {
                     $query->where($filter, $value);
                 }
@@ -56,24 +59,6 @@ class UserController extends Controller
         $offices = $query->latest()->paginate($perPage);
         return response()->json($offices);
     }
-
-    /* delete this methods
-    public function offices()
-    {
-        $items = Office::select('id', 'name')->latest()->active()->get();
-        return response()->json($items);
-    }
-
-    public function roles()
-    {
-        if (Auth::user()->hasRole('super')) {
-            $items = Role::select('id', 'name')->latest()->get();
-        } else {
-            $items = Role::select('id', 'name')->latest()->notSuper()->get();
-        }
-        
-        return response()->json($items);
-    }*/
 
     public function store(Request $request)
     {
