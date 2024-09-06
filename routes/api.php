@@ -167,7 +167,7 @@ Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'selects'], function (
     Route::get('/offices', [OfficeController::class, 'forSelect']);
     Route::get('/roles', [RoleController::class, 'forSelect']);
     Route::get('/type-attentions', [TypeAttentionController::class, 'forSelect']);
-    // Route::get('/professors', [ProfessorController::class, 'forSelect']);
+    Route::get('/users', [UserController::class, 'forSelect']);
     // Route::get('/students', [StudentController::class, 'forSelect']);
     // Route::get('/workers', [WorkerController::class, 'forSelect']);
     // Route::get('/externals', [ExternalController::class, 'forSelect']);

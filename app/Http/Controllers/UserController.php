@@ -138,4 +138,12 @@ class UserController extends Controller
             return response()->json($e->getMessage());
         }
     }
+
+    public function forSelect()
+    {
+        $users = DB::select("
+            SELECT id as value, concat_ws(' ', name, paternal_surname,maternal_surname ) as title 
+            FROM users;");
+        return response()->json($users);
+    }
 }

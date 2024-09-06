@@ -65,6 +65,6 @@ class User extends Authenticatable
 
     public function getRoleIdAttribute(): int
     {
-        return $this->roles->first()->id;
+        return $this->roles ? $this->roles->first()->id :null;
     }
 }
