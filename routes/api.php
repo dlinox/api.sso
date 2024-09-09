@@ -7,6 +7,7 @@ use App\Http\Controllers\OfficeController;
 use App\Http\Controllers\ProfessorController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\SatisfactionSurveyController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\TypeAttentionController;
 use App\Http\Controllers\UserController;
@@ -160,7 +161,17 @@ Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'attentions'], functio
     //offices
     Route::get('/offices', [AttentionController::class, 'offices']);
     // Route::put('/{attention}', [AttentionController::class, 'update'])->middleware('can:attentions.update');
+
+
 });
+
+Route::group(['prefix' => 'survey'], function () {
+    Route::post('/send-email', [SatisfactionSurveyController::class, 'store'])->middleware('auth:sanctum');
+    Route::get('/{token}', [SatisfactionSurveyController::class, 'getSurvey']);
+    //response
+    Route::put('/response/{token}', [SatisfactionSurveyController::class, 'responseSurvey']);
+});
+
 
 
 Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'selects'], function () {

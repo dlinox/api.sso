@@ -272,7 +272,12 @@ class AttentionController extends Controller
     {
         $user = Auth::user();
         $attentions = DB::table('attentions_view')
-            ->where('person_document', $document)
+            // ->where('person_document', $document)
+            // ->orwhere('person_code', $document)
+            ->orWhere(function ($query) use ($document) {
+                $query->where('person_document', $document)
+                    ->orwhere('person_code', $document);
+            })
             ->where('user_id', $user->id)
             ->get();
         return response()->json($attentions);

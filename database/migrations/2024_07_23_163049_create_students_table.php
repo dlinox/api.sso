@@ -23,6 +23,7 @@ return new class extends Migration
             $table->char('career_code', 3)->nullable();
             $table->char('student_code', 20)->nullable();
             $table->string('email')->nullable()->unique();
+            $table->char('location', 6)->nullable();
             $table->enum('gender', ['M', 'F', 'O'])->nullable();
             $table->boolean('status')->default(true);
             $table->unique(['document_type', 'document_number']);

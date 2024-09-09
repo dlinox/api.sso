@@ -131,16 +131,20 @@ class StudentController extends Controller
 
     public function receiveStudent(Request $request,  $document)
     {
-        $student = Student::where('document_number', $document)->exists();
+        $student = Student::where('student_code', $document)->exists();
         if (!$student) {
             $student  = Student::create([
                 'name' => $request->name,
-                'paternal_surname' => $request->paternal_surname,
-                'maternal_surname' => $request->maternal_surname,
-                'document_type' => '001',
-                'document_number' => $request->document_number,
-                'career_code' => $request->career_code,
-                'student_code' => $request->student_code,
+                'paternal_surname' => $request->lastName,
+                'maternal_surname' => $request->lastName2,
+                'document_type' => $request->documentType == 'DNI' ? '001' : '000',
+                'document_number' => $request->document,
+                'career_code' => $request->professionalSchoolCode,
+                'student_code' => $request->studentCode,
+                'location' => $request->ubigeo,
+                'email' => $request->email,
+                'phone_number' => $request->phoneNumber,
+                'status' => true
             ]);
             return response()->json(true);
         }
@@ -149,7 +153,7 @@ class StudentController extends Controller
     //getByDocument
     public function getByDocument($document)
     {
-        $student = Student::where('document_number', $document)->first();
+        $student = Student::where('student_code', $document)->first();
         return response()->json($student);
     }
 }
