@@ -163,13 +163,11 @@ class StudentController extends Controller
     public function getStudentByCode($code)
     {
 
-        try{
+        try {
 
-            
             $curl = curl_init();
-            
             curl_setopt_array($curl, array(
-                CURLOPT_URL => 'http://service5.unap.edu.pe/CONSULTAS_BIENESTAR/v1/student/byCode/141076/',
+                CURLOPT_URL => 'http://38.43.133.27/CONSULTAS_BIENESTAR/v1/student/byCode/' . $code . '/',
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_ENCODING => '',
                 CURLOPT_MAXREDIRS => 10,
@@ -181,15 +179,13 @@ class StudentController extends Controller
                     'Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiI1NmRiMThjMS00ODU1LTg4ODgtYzI5ZS0wMDAwM2ZhMTkxNTYiLCJzdWIiOiJGRUE5MDVDRS0zRDYxLTExRUYtOEM1Qy0wMDUwNTY4OTAwM0QiLCJleHAiOjE3NTIwMDQ0MTYsIm5iZiI6MTcyMDQ2ODQxNywiaWF0IjoxNzIwNDY4NDE2LCJqdGkiOiJNVGN5TURRMk9EUXhOZz09In0.BGiW_HKnnyImObXWytQLi_c93TgutdoJdhW7fYwNuKsEvIDbahe0DbsJaIwHtdTj1EYaqPp_fcz8IbxfHIftsw'
                 ),
             ));
-            
-            $response = curl_exec($curl);
-            
-            curl_close($curl);
-            
-            return response()->json(json_decode($response));
-        }
 
-        catch (\Exception $e) {
+            $response = curl_exec($curl);
+
+            curl_close($curl);
+
+            return response()->json(json_decode($response));
+        } catch (\Exception $e) {
             return response()->json($e->getMessage());
         }
     }
