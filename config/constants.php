@@ -5,7 +5,18 @@ return [
             'name' => 'dashboard',
             'description' => 'Dashboard',
             'type' => '001',
-            'actions' => [],
+            'actions' => [
+                [
+                    'name' => 'dashboard.attentions-by-month',
+                    'description' => 'Grafico - Atenciones por mes',
+                    'type' => '002',
+                ],
+                [
+                    'name' => 'dashboard.attentions-by-month-and-type',
+                    'description' => 'Grafico - Atenciones por mes y tipo',
+                    'type' => '002',
+                ],
+            ],
         ],
         [
             'name' => 'attentions',
@@ -37,12 +48,19 @@ return [
                     'description' => 'Atenciónes - Editar temporal',
                     'type' => '002',
                 ],
+            ],
+        ],
+        [
+            'name' => 'reports',
+            'description' =>  'Reportes',
+            'type' => '001',
+            'actions' => [
                 [
-                    'name' => 'attentions.edit',
+                    'name' => 'reports.edit',
                     'description' => 'Atenciónes - Editar',
                     'type' => '002',
                 ],
-            ],
+            ]
         ],
         [
             'name' => 'users',
