@@ -237,7 +237,9 @@ class AttentionController extends Controller
             $request['user_id'] = Auth::user()->id;
             $request['derivations'] = implode(',', $request->derivate_to);
             $attention = Attention::create($request->only('report_number', 'description', 'derivations', 'person_id', 'type_attention_id', 'user_id', 'person_type'));
-            return response()->json($attention);
+            return response()->json([
+                'message' => 'Atención registrada con éxito',
+            ]);
         } catch (\Exception $e) {
             return response()->json($e->getMessage());
         }
@@ -261,7 +263,9 @@ class AttentionController extends Controller
         try {
             $attention = Attention::find($request->id);
             $attention->update($request->only('report_number', 'description', 'person_id', 'type_attention_id'));
-            return response()->json($attention);
+            return response()->json([
+                'message' => 'Atención actualizada con éxito',
+            ]);
         } catch (\Exception $e) {
             return response()->json($e->getMessage());
         }
@@ -300,7 +304,11 @@ class AttentionController extends Controller
         try {
             $attention = Attention::find($id);
             $attention->delete();
-            return response()->json($attention);
+            return response()->json(
+                [
+                    'message' => 'Atención eliminada con éxito',
+                ]
+            );
         } catch (\Exception $e) {
             return response()->json($e->getMessage());
         }

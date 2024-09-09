@@ -163,6 +163,9 @@ Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'attentions'], functio
     // Route::put('/{attention}', [AttentionController::class, 'update'])->middleware('can:attentions.update');
 
 
+    //getStudentByCode
+    Route::get('/student/by-code/{code}', [StudentController::class, 'getStudentByCode']);
+
 });
 
 Route::group(['prefix' => 'survey'], function () {

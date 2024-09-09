@@ -22,19 +22,26 @@ class SatisfactionSurveyController extends Controller
             'person_id' => 'required|integer',
         ]);
 
-        $satisfactionSurvey = SatisfactionSurvey::create([
-            'attention_id' => $request->attention_id,
-            'person_type' => $request->person_type,
-            'person_id' => $request->person_id,
-            'user_id' => Auth::user()->id,
-        ]);
+        try {
 
-        if ($satisfactionSurvey) {
-            $token = Crypt::encryptString($satisfactionSurvey->id);
-            Mail::to($request->email)->send(new SendSurveyMail($token));
+
+            $satisfactionSurvey = SatisfactionSurvey::create([
+                'attention_id' => $request->attention_id,
+                'person_type' => $request->person_type,
+                'person_id' => $request->person_id,
+                'user_id' => Auth::user()->id,
+            ]);
+
+            if ($satisfactionSurvey) {
+                $token = Crypt::encryptString($satisfactionSurvey->id);
+                Mail::to($request->email)->send(new SendSurveyMail($token));
+                return response()->json(['message' => 'Correo enviado con éxito'], 201);
+            }
+
+            return response()->json(['message' => 'Error al enviar el correo'], 500);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 500);
         }
-
-        return response()->json($satisfactionSurvey);
     }
 
     public function getSurvey($token)
@@ -48,12 +55,17 @@ class SatisfactionSurveyController extends Controller
 
     public function responseSurvey(Request $request, $token)
     {
-        $id = Crypt::decryptString($token);
-        $satisfactionSurvey = SatisfactionSurvey::find($id);
-        $satisfactionSurvey->update([
-            'score' => $request->score,
-            'comments' => $request->comments,
-        ]);
-        return response()->json($satisfactionSurvey);
+
+        try {
+            $id = Crypt::decryptString($token);
+            $satisfactionSurvey = SatisfactionSurvey::find($id);
+            $satisfactionSurvey->update([
+                'score' => $request->score,
+                'comments' => $request->comments,
+            ]);
+            return response()->json(['message' => 'Gracias por su respuesta']);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 500);
+        }
     }
 }

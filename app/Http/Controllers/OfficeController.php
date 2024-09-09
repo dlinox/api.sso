@@ -70,7 +70,10 @@ class OfficeController extends Controller
         );
         try {
             $office = Office::create($request->only('id', 'name', 'status'));
-            return response()->json($office);
+            return response()->json([
+                'message' => 'Oficina creada con éxito',
+                'office' => $office
+            ]);
         } catch (\Exception $e) {
             return response()->json($e->getMessage());
         }
@@ -78,15 +81,23 @@ class OfficeController extends Controller
 
     public function  update(Request $request, $office)
     {
+
         $request->validate([
             'name' => 'required|string|max:255',
             'status' => 'required|boolean'
         ]);
 
-        $office = Office::find($office);
-        $office->update($request->only('name', 'status'));
+        try {
+            $office = Office::find($office);
+            $office->update($request->only('name', 'status'));
 
-        return response()->json($office);
+            return response()->json([
+                'message' => 'Oficina actualizada con éxito',
+                'office' => $office
+            ]);
+        } catch (\Exception $e) {
+            return response()->json($e->getMessage());
+        }
     }
 
     public function options()

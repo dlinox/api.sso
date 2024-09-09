@@ -73,7 +73,10 @@ class TypeAttentionController extends Controller
         // $request['id'] = (string) Str::uuid();
         try {
             $typeAttention = TypeAttention::create($request->only('id', 'name', 'status'));
-            return response()->json($typeAttention);
+            return response()->json([
+                'message' => 'Tipo de atención creado con éxito',
+                'typeAttention' => $typeAttention
+            ]);
         } catch (\Exception $e) {
             return response()->json($e->getMessage());
         }
@@ -86,10 +89,16 @@ class TypeAttentionController extends Controller
             'status' => 'required|boolean'
         ]);
 
-        $typeAttention = TypeAttention::find($typeAttention);
-        $typeAttention->update($request->only('name', 'status'));
-
-        return response()->json($typeAttention);
+        try {
+            $typeAttention = TypeAttention::find($typeAttention);
+            $typeAttention->update($request->only('name', 'status'));
+            return response()->json([
+                'message' => 'Tipo de atención actualizado con éxito',
+                'typeAttention' => $typeAttention
+            ]);
+        } catch (\Exception $e) {
+            return response()->json($e->getMessage());
+        }
     }
 
     public function options()
