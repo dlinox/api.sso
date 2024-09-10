@@ -82,6 +82,7 @@ class UserController extends Controller
                 // 'document_type.required' => 'El tipo de documento es obligatorio',
                 'document_number.required' => 'El número de documento es obligatorio',
                 'email.required' => 'El correo electrónico es obligatorio',
+                'email.unique' => 'El correo electrónico ya está en uso',
                 'role_id.required' => 'El rol es obligatorio',
                 'password.required' => 'La contraseña es obligatoria',
                 'status.required' => 'El estado es obligatorio'
@@ -92,7 +93,7 @@ class UserController extends Controller
             $user = User::create($request->only('name', 'paternal_surname', 'maternal_surname',  'document_number', 'email', 'password', 'office_id', 'status'));
             $user->assignRole($request->role_id);
             DB::commit();
-            return response()->json($user);
+            return response()->json(['message' => 'Usuario creado correctamente']);
         } catch (\Exception $e) {
             DB::rollBack();
 
@@ -121,6 +122,7 @@ class UserController extends Controller
                 'document_type.required' => 'El tipo de documento es obligatorio',
                 'document_number.required' => 'El número de documento es obligatorio',
                 'email.required' => 'El correo electrónico es obligatorio',
+                'email.unique' => 'El correo electrónico ya está en uso',
                 'role_id.required' => 'El rol es obligatorio',
                 'status.required' => 'El estado es obligatorio'
             ]
@@ -131,7 +133,7 @@ class UserController extends Controller
             $user->update($request->only('name', 'paternal_surname', 'maternal_surname', 'document_type', 'document_number', 'email', 'office_id', 'status'));
             $user->syncRoles($request->role_id);
             DB::commit();
-            return response()->json($user);
+            return response()->json(['message' => 'Usuario actualizado correctamente']);
         } catch (\Exception $e) {
             DB::rollBack();
 

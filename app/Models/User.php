@@ -31,6 +31,8 @@ class User extends Authenticatable
 
     protected $appends = [
         'role_id',
+        'role_name',
+        'office_name',
     ];
 
     protected function casts(): array
@@ -61,6 +63,16 @@ class User extends Authenticatable
     public function getDocumentAttribute(): string
     {
         return "{$this->document_type} {$this->document_number}";
+    }
+
+    public function getRoleNameAttribute(): string
+    {
+        return $this->roles ? $this->roles->first()->name : '';
+    }
+
+    public function getOfficeNameAttribute(): string
+    {
+        return $this->office ? $this->office->name : '';
     }
 
     public function getRoleIdAttribute(): int

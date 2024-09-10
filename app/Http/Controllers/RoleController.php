@@ -63,22 +63,6 @@ class RoleController extends Controller
         return response()->json($offices);
     }
 
-    public function index()
-    {
-        $professors = Role::latest()->select('roles.id', 'roles.name', DB::raw('GROUP_CONCAT(role_has_permissions.permission_id) as permissions'))
-            ->leftJoin('role_has_permissions', 'roles.id', '=', 'role_has_permissions.role_id')
-            ->where('role_has_permissions.permission_id', '!=', 1)
-            ->groupBy('roles.id')
-            ->get()->map(function ($role) {
-                $role->permissions = explode(',',  $role->permissions);
-                $role->permissions = array_map('intval', $role->permissions);
-                return $role;
-            });
-
-        return response()->json($professors);
-    }
-
-
     public function permissions()
     {
         $permissions = Permission::select('id as value', DB::raw("concat_ws(' | ', if(type = '001', 'MENU', 'ACCIÓN'), description  ) as title"))->where('id', '!=', 1)->get();
@@ -107,12 +91,11 @@ class RoleController extends Controller
         $request->merge(['guard_name' => 'web']);
 
         try {
-            $professor = Role::create($request->except('id'));
+            $item = Role::create($request->except('id'));
 
-            //asignar permisos
-            $professor->syncPermissions($request->permissions);
+            $item->syncPermissions($request->permissions);
 
-            return response()->json($professor);
+            return response()->json(['message' => 'Registro creado']);
         } catch (\Exception $e) {
             return response()->json($e->getMessage());
         }
@@ -133,7 +116,7 @@ class RoleController extends Controller
             $role = Role::find($role);
             $role->update($request->only('name'));
             $role->syncPermissions($request->permissions);
-            return response()->json($role);
+            return response()->json(['message' => 'Registro actualizado']);
         } catch (\Exception $e) {
             return response()->json($e->getMessage());
         }

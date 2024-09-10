@@ -27,7 +27,6 @@ class TypeAttentionController extends Controller
         // Filtros dinámicos
         if ($request->has('filters') && is_array($request->filters)) {
             foreach ($request->filters as $filter => $value) {
-                // Aquí puedes agregar validaciones adicionales según sea necesario
                 if (!is_null($value)) {
                     $query->where($filter, $value);
                 }

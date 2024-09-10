@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('type_attentions', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->char('type', 3)->nullable();
             $table->string('description')->nullable();
             $table->boolean('status')->default(true);
             $table->timestamps();

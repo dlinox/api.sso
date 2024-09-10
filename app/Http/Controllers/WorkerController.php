@@ -27,7 +27,6 @@ class WorkerController extends Controller
         // Filtros dinámicos
         if ($request->has('filters') && is_array($request->filters)) {
             foreach ($request->filters as $filter => $value) {
-                // Aquí puedes agregar validaciones adicionales según sea necesario
                 if (!is_null($value)) {
                     $query->where($filter, $value);
                 }
@@ -48,12 +47,6 @@ class WorkerController extends Controller
         return response()->json($items);
     }
 
-    public function index()
-    {
-        $professors = Worker::latest()->get();
-        return response()->json($professors);
-    }
-
     public function offices()
     {
         $professors = Office::select('id', 'name')->latest()->active()->get();
@@ -71,7 +64,7 @@ class WorkerController extends Controller
                 'document_number' => 'required|max:20',
                 'birthdate' => 'nullable|date',
                 'phone_number' => 'nullable|digits:9',
-                'email' => 'nullable|email|max:255',
+                'email' => 'required|email|max:255|unique:workers,email',
                 'gender' => 'nullable|max:1',
                 'status' => 'required|boolean'
             ],
@@ -83,13 +76,17 @@ class WorkerController extends Controller
                 'maternal_surname.max' => 'El apellido materno no debe exceder los 80 caracteres',
                 'document_type.required' => 'El tipo de documento es obligatorio',
                 'document_number.required' => 'El número de documento es obligatorio',
-                'status.required' => 'El estado es obligatorio'
+                'status.required' => 'El estado es obligatorio',
+                'email.required' => 'El correo electrónico es obligatorio',
+                'email.unique' => 'El correo electrónico ya se encuentra registrado'
             ]
         );
 
         try {
-            $professor = Worker::create($request->except('id'));
-            return response()->json($professor);
+            Worker::create($request->except('id'));
+            return response()->json([
+                'message' => 'Item registrado correctamente',
+            ]);
         } catch (\Exception $e) {
             return response()->json($e->getMessage());
         }
@@ -106,7 +103,7 @@ class WorkerController extends Controller
                 'document_number' => 'required|max:20',
                 'birthdate' => 'nullable|date',
                 'phone_number' => 'nullable|digits:9',
-                'email' => 'nullable|email|max:255',
+                'email' => 'required|email|max:255|unique:workers,email,' . $id,
                 'gender' => 'nullable|max:1',
                 'status' => 'required|boolean'
             ],
@@ -118,14 +115,18 @@ class WorkerController extends Controller
                 'maternal_surname.max' => 'El apellido materno no debe exceder los 80 caracteres',
                 'document_type.required' => 'El tipo de documento es obligatorio',
                 'document_number.required' => 'El número de documento es obligatorio',
-                'status.required' => 'El estado es obligatorio'
+                'status.required' => 'El estado es obligatorio',
+                'email.required' => 'El correo electrónico es obligatorio',
+                'email.unique' => 'El correo electrónico ya se encuentra registrado'
             ]
         );
 
         try {
-            $professor = Worker::find($id);
-            $professor->update($request->except('id'));
-            return response()->json($professor);
+            $item = Worker::find($id);
+            $item->update($request->except('id'));
+            return response()->json([
+                'message' => 'Item actualizado correctamente',
+            ]);
         } catch (\Exception $e) {
             return response()->json($e->getMessage());
         }

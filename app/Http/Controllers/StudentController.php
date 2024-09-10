@@ -146,6 +146,8 @@ class StudentController extends Controller
                 'location' => $request->ubigeo,
                 'email' => $request->email,
                 'phone_number' => $request->phoneNumber,
+                'mother_name' => $request->motherFullName,
+                'father_name' => $request->fatherFullName,
                 'status' => true
             ]);
             return response()->json(true);
@@ -181,12 +183,15 @@ class StudentController extends Controller
             ));
 
             $response = curl_exec($curl);
-
             curl_close($curl);
-
             return response()->json(json_decode($response));
         } catch (\Exception $e) {
-            return response()->json($e->getMessage());
+            return response()->json(
+                [
+                    'message' => $e->getMessage()
+                ],
+                500
+            );
         }
     }
 }

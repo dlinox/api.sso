@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Validator;
 use App\Models\Office;
 use App\Models\Professor;
 use Illuminate\Http\Request;
@@ -59,13 +60,14 @@ class ProfessorController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate(
+        $validator = Validator::make(
+            $request->all(),
             [
                 'name' => 'required|max:100',
                 'paternal_surname' => 'nullable|max:80|required_without:maternal_surname',
                 'maternal_surname' => 'nullable|max:80|required_without:paternal_surname',
                 'document_type' => 'required|max:3',
-                'document_number' => 'required|max:20',
+                'document_number' => 'required|max:20|unique:professors',
                 'birthdate' => 'nullable|date',
                 'phone_number' => 'nullable|digits:9',
                 'career_code' => 'nullable|max:3',
@@ -82,15 +84,24 @@ class ProfessorController extends Controller
                 'maternal_surname.max' => 'El apellido materno no debe exceder los 80 caracteres',
                 'document_type.required' => 'El tipo de documento es obligatorio',
                 'document_number.required' => 'El número de documento es obligatorio',
+                'document_number.unique' => 'El número de documento ya está en uso',
                 'status.required' => 'El estado es obligatorio'
             ]
         );
 
+        if ($validator->fails()) {
+            return response()->json(['message' =>  "Error en la validación", 'errors' => $validator->errors()], 422);
+        }
+
         try {
-            $professor = Professor::create($request->except('id'));
-            return response()->json($professor);
+            Professor::create($request->except('id'));
+            return response()->json([
+                'message' => 'Profesor creado correctamente'
+            ]);
         } catch (\Exception $e) {
-            return response()->json($e->getMessage());
+            return response()->json([
+                'message' => $e->getMessage()
+            ], 500);
         }
     }
 
@@ -126,7 +137,9 @@ class ProfessorController extends Controller
         try {
             $professor = Professor::find($id);
             $professor->update($request->except('id'));
-            return response()->json($professor);
+            return response()->json([
+                'message' => 'Profesor actualizado correctamente'
+            ]);
         } catch (\Exception $e) {
             return response()->json($e->getMessage());
         }

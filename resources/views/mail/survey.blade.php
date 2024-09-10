@@ -6,7 +6,6 @@
 
 <head>
     <meta charset="UTF-8">
-
 </head>
 
 <body>
@@ -18,7 +17,7 @@
     <!-- <a href="http://localhost:5173/c/survey/{{ $token }}">Realizar encuesta</a> -->
     <p>Gracias por su colaboración.</p>
     <p>Saludos cordiales,</p>
-  
+
 </body>
 
 </html>

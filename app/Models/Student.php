@@ -21,7 +21,9 @@ class Student extends Model
         'student_code',
         'email',
         'gender',
-        'status'
+        'status',
+        'mother_name',
+        'father_name'
     ];
 
     protected $casts = [

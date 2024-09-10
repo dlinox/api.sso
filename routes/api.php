@@ -30,7 +30,6 @@ Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'offices'], function (
 
     Route::post('/items', [OfficeController::class, 'items']);
 
-    Route::get('/', [OfficeController::class, 'index'])->middleware('can:offices');
     Route::post('/', [OfficeController::class, 'store'])->middleware('can:offices.create');
     Route::put('/{office}', [OfficeController::class, 'update'])->middleware('can:offices.update');
 
@@ -52,7 +51,7 @@ Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'professors'], functio
 
     Route::post('/items', [ProfessorController::class, 'items']);
 
-    Route::get('/', [ProfessorController::class, 'index'])->middleware('can:professors');
+
     Route::post('/', [ProfessorController::class, 'store'])->middleware('can:professors.create');
     Route::put('/{professor}', [ProfessorController::class, 'update'])->middleware('can:professors.update');
     Route::get('/search/{term}', [ProfessorController::class, 'search']);
@@ -80,7 +79,6 @@ Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'workers'], function (
 
     Route::post('/items', [WorkerController::class, 'items']);
 
-    Route::get('/', [WorkerController::class, 'index'])->middleware('can:workers');
     Route::post('/', [WorkerController::class, 'store'])->middleware('can:workers.create');
     Route::put('/{worker}', [WorkerController::class, 'update'])->middleware('can:workers.update');
     Route::get('/offices', [WorkerController::class, 'offices']);
@@ -104,7 +102,6 @@ Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'users'], function () 
     //items
     Route::post('/items', [UserController::class, 'items']);
 
-    Route::get('/', [UserController::class, 'index'])->middleware('can:users');
     Route::post('/', [UserController::class, 'store'])->middleware('can:users.create');
     Route::put('/{user}', [UserController::class, 'update'])->middleware('can:users.update');
     Route::get('/offices', [UserController::class, 'offices']);
@@ -113,10 +110,7 @@ Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'users'], function () 
 
 Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'roles'], function () {
 
-    //imtes
     Route::post('/items', [RoleController::class, 'items']);
-
-    Route::get('/', [RoleController::class, 'index'])->middleware('can:roles');
     Route::post('/', [RoleController::class, 'store'])->middleware('can:roles.create');
     Route::put('/{role}', [RoleController::class, 'update'])->middleware('can:roles.update');
     Route::post('/{role}/permissions', [RoleController::class, 'assignPermissions'])->middleware('can:roles.assign-permissions');
@@ -150,48 +144,36 @@ Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'attentions'], functio
 
 
 
-    Route::get('/', [AttentionController::class, 'index']);
-    Route::get('/last', [AttentionController::class, 'last']);
-
+    // Route::get('/', [AttentionController::class, 'index']);
+    // Route::get('/last', [AttentionController::class, 'last']);
     Route::post('/{type}', [AttentionController::class, 'store']);
-
     Route::put('/', [AttentionController::class, 'update']);
-    //report 
     Route::get('/report', [AttentionController::class, 'report']);
-    //offices
+
+
     Route::get('/offices', [AttentionController::class, 'offices']);
-    // Route::put('/{attention}', [AttentionController::class, 'update'])->middleware('can:attentions.update');
-
-
-    //getStudentByCode
     Route::get('/student/by-code/{code}', [StudentController::class, 'getStudentByCode']);
-
 });
 
 Route::group(['prefix' => 'survey'], function () {
     Route::post('/send-email', [SatisfactionSurveyController::class, 'store'])->middleware('auth:sanctum');
     Route::get('/{token}', [SatisfactionSurveyController::class, 'getSurvey']);
-    //response
     Route::put('/response/{token}', [SatisfactionSurveyController::class, 'responseSurvey']);
 });
 
-
+Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'reports'], function () {
+    Route::get('/items/users', [ReportController::class, 'ratingForUser']);
+});
 
 Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'selects'], function () {
     Route::get('/offices', [OfficeController::class, 'forSelect']);
     Route::get('/roles', [RoleController::class, 'forSelect']);
     Route::get('/type-attentions', [TypeAttentionController::class, 'forSelect']);
     Route::get('/users', [UserController::class, 'forSelect']);
-    // Route::get('/students', [StudentController::class, 'forSelect']);
-    // Route::get('/workers', [WorkerController::class, 'forSelect']);
-    // Route::get('/externals', [ExternalController::class, 'forSelect']);
 });
 
-
 Route::group(['middleware' => 'auth:sanctum', 'prefix' => 'reports'], function () {
-
     Route::get('/attentions-by-month/{year}', [ReportController::class, 'attentionsByMonth']);
-    //attentionsByMonthType
     Route::get('/attentions-by-month-type/{year}', [ReportController::class, 'attentionsByMonthType']);
 });
 

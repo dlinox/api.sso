@@ -2,16 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\SendSurveyMail;
 use App\Models\Attention;
 use App\Models\Career;
 use App\Models\External;
 use App\Models\Office;
 use App\Models\Professor;
+use App\Models\SatisfactionSurvey;
 use App\Models\Student;
 use App\Models\Worker;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class AttentionController extends Controller
 {
@@ -233,14 +237,49 @@ class AttentionController extends Controller
             ]
         );
         try {
+
+            DB::beginTransaction();
             $request['person_type'] = $type;
             $request['user_id'] = Auth::user()->id;
             $request['derivations'] = implode(',', $request->derivate_to);
             $attention = Attention::create($request->only('report_number', 'description', 'derivations', 'person_id', 'type_attention_id', 'user_id', 'person_type'));
-            return response()->json([
-                'message' => 'Atención registrada con éxito',
+
+
+            $satisfactionSurvey = SatisfactionSurvey::create([
+                'attention_id' => $attention->id,
+                'person_type' => $request->person_type,
+                'person_id' => $request->person_id,
+                'user_id' => Auth::user()->id,
             ]);
+
+            //buscar a la persona y actualizar el correo
+
+            if ($type == '001') {
+                $student = Student::find($request->person_id);
+                $student->update(['email' => $request->email]);
+            } else if ($type == '002') {
+                $professor = Professor::find($request->person_id);
+                $professor->update(['email' => $request->email]);
+            } else if ($type == '003') {
+                $worker = Worker::find($request->person_id);
+                $worker->update(['email' => $request->email]);
+            } else if ($type == '004') {
+                $external = External::find($request->person_id);
+                $external->update(['email' => $request->email]);
+            }
+
+            if ($satisfactionSurvey) {
+                $token = Crypt::encryptString($satisfactionSurvey->id);
+                Mail::to($request->email)->send(new SendSurveyMail($token));
+
+                DB::commit();
+                return response()->json(['message' => 'Atención registrada con éxito, y se ha enviado un correo al usuario']);
+            }
+
+            DB::rollBack();
+            return response()->json(['message' => 'Error al enviar el correo'], 500);
         } catch (\Exception $e) {
+            DB::rollBack();
             return response()->json($e->getMessage());
         }
     }

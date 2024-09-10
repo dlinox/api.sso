@@ -122,4 +122,43 @@ class ReportController extends Controller
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
+
+    public function ratingForUser(Request $request)
+    {
+        // Fecha de inicio y fin
+        $start_date = $request->start_date;
+        $end_date = $request->end_date;
+
+        // Construir la consulta base
+        $query = DB::table('users as u')
+            ->leftJoin('satisfaction_surveys as sa', 'sa.user_id', '=', 'u.id')
+            ->select(
+                'u.id',
+                'u.name',
+                'u.paternal_surname',
+                'u.maternal_surname',
+                'u.email',
+                DB::raw('COUNT(sa.id) as total_surveys'),
+                DB::raw('AVG(sa.score) as average_score'),
+                DB::raw('SUM(CASE WHEN sa.score = 5 THEN 1 ELSE 0 END) as five_score'),
+                DB::raw('SUM(CASE WHEN sa.score = 4 THEN 1 ELSE 0 END) as four_score'),
+                DB::raw('SUM(CASE WHEN sa.score = 3 THEN 1 ELSE 0 END) as three_score'),
+                DB::raw('SUM(CASE WHEN sa.score = 2 THEN 1 ELSE 0 END) as two_score'),
+                DB::raw('SUM(CASE WHEN sa.score = 1 THEN 1 ELSE 0 END) as one_score'),
+                DB::raw('SUM(CASE WHEN sa.score is null THEN 1 ELSE 0 END) as no_score')
+            )
+            ->groupBy('u.id')
+            ->orderBy('average_score', 'DESC');
+
+        // Si hay fechas, aplicamos los filtros de rango
+        if ($start_date && $end_date) {
+            $query->whereBetween('sa.created_at', [$start_date, $end_date]);
+        }
+
+        // Ejecutar la consulta
+        $response = $query->get();
+
+
+        return response()->json($response);
+    }
 }

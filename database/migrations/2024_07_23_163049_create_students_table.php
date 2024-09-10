@@ -23,9 +23,15 @@ return new class extends Migration
             $table->char('career_code', 3)->nullable();
             $table->char('student_code', 20)->nullable();
             $table->string('email')->nullable()->unique();
+
+            $table->string('mother_name', 200)->nullable();
+            $table->string('father_name', 200)->nullable();
+
             $table->char('location', 6)->nullable();
             $table->enum('gender', ['M', 'F', 'O'])->nullable();
+
             $table->boolean('status')->default(true);
+
             $table->unique(['document_type', 'document_number']);
             $table->timestamps();
         });
