@@ -14,5 +14,26 @@
                 <img src="{{ public_path('unap-logo.png') }}" alt="Logo 2" width="80">
             </td>
         </tr>
+
+        <tr style="width: 100%;">
+            <td colspan="3" style="text-align: center;">
+                <h3>Reporte de Atenciones</h3>
+            </td>
+
+        </tr>
+        <tr style="width: 100%;">
+            <td colspan="3" style="text-align: start;">
+                @if($userName != "")
+                <p>
+                    Usuario: {{$userName}}
+                </p>
+                @endif
+                @if($tyepAttention != "")
+                <p>
+                    Tipo de atención: {{$tyepAttention}}
+                </p>
+                @endif
+            </td>
+        </tr>
     </table>
 </div>

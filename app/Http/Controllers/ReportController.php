@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Attention;
+use App\Models\TypeAttention;
+use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Exception;
 use Illuminate\Http\Request;
@@ -96,25 +98,47 @@ class ReportController extends Controller
                 'mode' => 'utf-8',
                 'format' => 'A4',
                 'orientation' => 'P',
-                'margin_top' => 40,
+                'margin_top' => 60,
                 'margin_bottom' => 15,
+                'default_font' => 'arial',
             ]);
 
+
+            $userName = "";
+            $tyepAttention = "";
+
+            if ($request->filters) {
+                if (isset($request->filters['user_id'])) {
+                    $user = User::select(DB::raw("concat_ws(' ', name, paternal_surname,maternal_surname) as name"))
+                        ->where('id', $request->filters['user_id'])
+                        ->first();
+                    $userName  = $user->name;
+                }
+                if (isset($request->filters['type_attention_id'])) {
+                    $ta = TypeAttention::find($request->filters['type_attention_id']);
+                    $tyepAttention = $ta->name;
+                }
+            }
+
             $data = [
-                'data' => $request->all(),
+                'data' => $request->data,
+                'userName' => $userName,
+
+            ];
+
+            $dataHeader = [
+                'userName' => $userName,
+                'tyepAttention' => $tyepAttention
             ];
 
             $content = view('pdf.attentions.content', $data)->render() . PHP_EOL;
-            //_header
-            $header = view('pdf.attentions._header')->render() . PHP_EOL;
-            //_footer
+            $header = view('pdf.attentions._header', $dataHeader)->render() . PHP_EOL;
             $footer = view('pdf.attentions._footer')->render() . PHP_EOL;
 
             $mpdf->SetHeader($header);
             $mpdf->SetFooter($footer);
             $mpdf->WriteHTML($content);
 
-            // Enviar el PDF como un archivo de descarga
             return response($mpdf->Output('reporte.pdf', 'S'), 200)
                 ->header('Content-Type', 'application/pdf')
                 ->header('Content-Disposition', 'attachment; filename="reporte.pdf"');
@@ -125,11 +149,10 @@ class ReportController extends Controller
 
     public function ratingForUser(Request $request)
     {
-        // Fecha de inicio y fin
+
         $start_date = $request->start_date;
         $end_date = $request->end_date;
 
-        // Construir la consulta base
         $query = DB::table('users as u')
             ->leftJoin('satisfaction_surveys as sa', 'sa.user_id', '=', 'u.id')
             ->select(

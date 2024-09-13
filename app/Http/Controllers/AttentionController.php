@@ -352,4 +352,12 @@ class AttentionController extends Controller
             return response()->json($e->getMessage());
         }
     }
+
+    public function getNextByType($typeId)
+    {
+
+        $current  = Attention::where('type_attention_id', $typeId)->count();
+
+        return $current + 1;
+    }
 }

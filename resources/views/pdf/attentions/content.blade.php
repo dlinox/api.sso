@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Reporte</title>
 </head>
 
 <body>
@@ -24,18 +24,28 @@
             </thead>
             <tbody>
                 @foreach ($data as $index => $val)
-                    <tr>
-                        <td style=" border: 1px solid #000; padding: 5px;">{{ $index + 1 }}</td>
-                        <td style=" border: 1px solid #000; padding: 5px;">{{ $val['report_number'] }}</td>
-                        <td style=" border: 1px solid #000; padding: 5px;">{{ $val['person_name'] }}</td>
-                        <td style=" border: 1px solid #000; padding: 5px;">{{ $val['person_document'] }}</td>
-                        <td style=" border: 1px solid #000; padding: 5px;">{{ $val['person_code'] }}</td>
-                        <td style=" border: 1px solid #000; padding: 5px;">{{ $val['unit_name'] }}</td>
-                        <td style=" border: 1px solid #000; padding: 5px;">{{ $val['type_attention_name'] }}</td>
-                        <td style=" border: 1px solid #000; padding: 5px;">{{ $val['created_at'] }}</td>
-                    </tr>
+                <tr>
+                    <td style=" border: 1px solid #000; padding: 5px;">{{ $index + 1 }}</td>
+                    <td style=" border: 1px solid #000; padding: 5px;">{{ $val['report_number'] }}</td>
+                    <td style=" border: 1px solid #000; padding: 5px;">{{ $val['person_name'] }}</td>
+                    <td style=" border: 1px solid #000; padding: 5px;">{{ $val['person_document'] }}</td>
+                    <td style=" border: 1px solid #000; padding: 5px;">{{ $val['person_code'] }}</td>
+                    <td style=" border: 1px solid #000; padding: 5px;">{{ $val['unit_name'] }}</td>
+                    <td style=" border: 1px solid #000; padding: 5px;">{{ $val['type_attention_name'] }}</td>
+                    <td style=" border: 1px solid #000; padding: 5px;">{{ $val['created_at'] }}</td>
+                </tr>
                 @endforeach
             </tbody>
+        </table>
+
+        <table style="width: 100%; border-collapse: collapse; margin-top: 150px ;">
+            <tr>
+                <td style="width: 65%;">
+                </td>
+                <td style="width: 35%; border-top: 1px solid #000; text-align:center;">
+                    {{$userName}}
+                </td>
+            </tr>
         </table>
     </div>
 </body>
