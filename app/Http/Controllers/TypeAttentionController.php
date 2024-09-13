@@ -81,7 +81,7 @@ class TypeAttentionController extends Controller
         }
     }
 
-    public function  update(Request $request, $typeAttention)
+    public function update(Request $request, $typeAttention)
     {
         $request->validate([
             'name' => 'required|string|max:255',
@@ -108,7 +108,7 @@ class TypeAttentionController extends Controller
 
     public function forSelect()
     {
-        $typeAttentions = TypeAttention::select('id as value', 'name as title')->active()->get();
+        $typeAttentions = TypeAttention::select('id as value', 'name as title', 'type')->active()->get();
         return response()->json($typeAttentions);
     }
 }
