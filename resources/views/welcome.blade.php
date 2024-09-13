@@ -1,15 +1,15 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="es">
 
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Hello World</title>
-
+    <meta name="robots" content="noindex, nofollow">
+    <title>SUSS-DBU-UNA</title>
 </head>
 
 <body>
-    <p>Hello World </p>
+    SUSS-DBU-UNA
 </body>
 
 </html>

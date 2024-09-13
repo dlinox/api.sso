@@ -36,13 +36,11 @@ class AttentionController extends Controller
             $query->where('name', 'like', '%' . $request->search . '%');
         }
 
-        // Filtros dinámicos
+        
         if ($request->has('filters') && is_array($request->filters)) {
             foreach ($request->filters as $filter => $value) {
-                // Aquí puedes agregar validaciones adicionales según sea necesario
-                if (!is_null($value)) {
-                    $query->where($filter, $value);
-                }
+
+                $query->where($filter, $value);
             }
         }
 
@@ -65,19 +63,32 @@ class AttentionController extends Controller
         $query = DB::table('attentions_view');
 
         if (Auth::user()->office_id) {
-            $query->where('user_id', Auth::user()->id);
+            $query->where('attentions_view.user_id', Auth::user()->id);
         }
+
+        if ($request->has('startDate') && $request->has('endDate')) {
+            $query->whereBetween('attentions_view.created_at', [$request->startDate, $request->endDate]);
+        }
+
 
         if ($type !== '000') {
             $query->where('person_type', $type);
         }
+        //add user_name
+        $query->select(
+            'attentions_view.*',
+            DB::raw("concat_ws(' ', users.name,  users.paternal_surname, users.maternal_surname) as user_name"),
+        )
+            ->join('type_attentions', 'type_attentions.id', '=', 'attentions_view.type_attention_id')
+            ->join('users', 'users.id', '=', 'attentions_view.user_id')
+            ->orderBy('attentions_view.created_at', 'desc');
 
         if ($request->has('search')) {
             $search = $request->search;
             $query->where(function ($query) use ($search) {
-                $query->where('person_name', 'like', '%' . $search . '%')
-                    ->orWhere('person_document', 'like', '%' . $search . '%')
-                    ->orWhere('person_code', 'like', '%' . $search . '%');
+                $query->where('attentions_view.person_name', 'like', '%' . $search . '%')
+                    ->orWhere('attentions_view.person_document', 'like', '%' . $search . '%')
+                    ->orWhere('attentions_view.person_code', 'like', '%' . $search . '%');
             });
         }
         // Filtros dinámicos
@@ -99,8 +110,6 @@ class AttentionController extends Controller
         $perPage = $request->itemsPerPage == -1
             ? $query->count()
             : ($request->itemsPerPage ?? 10);
-
-
 
         $items = $query->paginate($perPage);
 
@@ -356,7 +365,7 @@ class AttentionController extends Controller
     public function getNextByType($typeId)
     {
 
-        $current  = Attention::where('type_attention_id', $typeId)->count();
+        $current = Attention::where('type_attention_id', $typeId)->count();
 
         return $current + 1;
     }

@@ -28,26 +28,8 @@
         <tr style="width: 100%;">
             <td colspan="3" style="text-align: start;">
                 <p>
-                    <b> Usuario: </b> {{$userName ?? 'No especificado'}}
+                    <b> Generado por: </b> {{$userName ?? 'No especificado'}}
                 </p>
-                <p>
-                    <b> Tipo de atención: </b> {{$tyepAttention ?? 'No especificado'}}
-                </p>
-            </td>
-        </tr>
-
-
-        <tr style="width: 100%;">
-            <td colspan="3" style="text-align: right;">
-                @if($dates)
-                    <p style="font-size: 10px;">
-                        {{$dates}}
-                    </p>
-                @else
-                    <p style="font-size: 10px; color: white;">
-                        ----------------------
-                    </p>
-                @endif
             </td>
         </tr>
     </table>
