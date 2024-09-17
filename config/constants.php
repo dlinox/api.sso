@@ -23,11 +23,11 @@ return [
             'description' => 'Atenciónes',
             'type' => '001',
             'actions' => [
-                [
-                    'name' => 'attentions.report',
-                    'description' => 'Ver reporte de atenciónes',
-                    'type' => '002',
-                ],
+                // [
+                //     'name' => 'attentions.report',
+                //     'description' => 'Ver reporte de atenciónes',
+                //     'type' => '002',
+                // ],
                 [
                     'name' => 'attentions.student',
                     'description' => 'Atenciónes - Estudiante',
@@ -48,6 +48,11 @@ return [
                     'description' => 'Atenciónes - Editar temporal',
                     'type' => '002',
                 ],
+                [
+                    'name' => 'attentions.delete-temporal',
+                    'description' => 'Atenciónes - Eliminar temporal',
+                    'type' => '002',
+                ],
             ],
         ],
         [
@@ -60,6 +65,16 @@ return [
                     'description' => 'Atenciónes - Editar',
                     'type' => '002',
                 ],
+                [
+                    'name' => 'reports.delete',
+                    'description' => 'Atenciónes - Eliminar',
+                    'type' => '002',
+                ],
+                [
+                    'name' => 'reports.pdf',
+                    'description' => 'Atenciónes - PDF',
+                    'type' => '002',
+                ]
             ]
         ],
         [
@@ -154,23 +169,23 @@ return [
                 ],
             ]
         ],
-        [
-            'name' => 'externals',
-            'description' => 'Externos',
-            'type' => '001',
-            'actions' => [
-                [
-                    'name' => 'externals.update',
-                    'description' => 'Externos - Actualizar',
-                    'type' => '002',
-                ],
-                [
-                    'name' => 'externals.create',
-                    'description' => 'Externos - Crear',
-                    'type' => '002',
-                ],
-            ]
-        ],
+        // [
+        //     'name' => 'externals',
+        //     'description' => 'Externos',
+        //     'type' => '001',
+        //     'actions' => [
+        //         [
+        //             'name' => 'externals.update',
+        //             'description' => 'Externos - Actualizar',
+        //             'type' => '002',
+        //         ],
+        //         [
+        //             'name' => 'externals.create',
+        //             'description' => 'Externos - Crear',
+        //             'type' => '002',
+        //         ],
+        //     ]
+        // ],
         [
             'name' => 'offices',
             'description' => 'Oficinas',

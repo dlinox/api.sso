@@ -36,7 +36,7 @@ class AttentionController extends Controller
             $query->where('name', 'like', '%' . $request->search . '%');
         }
 
-        
+
         if ($request->has('filters') && is_array($request->filters)) {
             foreach ($request->filters as $filter => $value) {
 
@@ -148,13 +148,13 @@ class AttentionController extends Controller
                 $attention->person_name = Student::select(DB::raw("CONCAT_WS(' ', name, paternal_surname) as name"))->where('id', $attention->person_id)->first()->name;
                 $attention->unit_name = Career::select('name')->where('code', Student::select('career_code')->where('id', $attention->person_id)->first()->career_code)->first()->name;
             } else if ($attention->person_type == '002') {
-                $attention->person_name = Professor::select(DB::raw("CONCAT(name,' ',paternal_surname) as name"))->where('id', $attention->person_id)->first()->name;
+                $attention->person_name = Professor::select(DB::raw("CONCAT_WS(' ', name,paternal_surname) as name"))->where('id', $attention->person_id)->first()->name;
                 $attention->unit_name = Career::select('name')->where('code', Professor::select('career_code')->where('id', $attention->person_id)->first()->career_code)->first()->name;
             } else if ($attention->person_type == '003') {
-                $attention->person_name = Worker::select(DB::raw("CONCAT(name,' ',paternal_surname) as name"))->where('id', $attention->person_id)->first()->name;
+                $attention->person_name = Worker::select(DB::raw("CONCAT_WS(' ', name,paternal_surname) as name"))->where('id', $attention->person_id)->first()->name;
                 $attention->unit_name = Office::select('name')->where('id', Worker::select('office_id')->where('id', $attention->person_id)->first()->office_id)->first()->name;
             } else if ($attention->person_type == '004') {
-                $attention->person_name = External::select(DB::raw("CONCAT(name,' ',paternal_surname) as name"))->where('id', $attention->person_id)->first()->name;
+                $attention->person_name = External::select(DB::raw("CONCAT_WS(' ', name,paternal_surname) as name"))->where('id', $attention->person_id)->first()->name;
                 $attention->unit_name = 'Externo';
             }
             return $attention;
