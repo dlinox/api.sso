@@ -49,7 +49,7 @@ class UserSeeder extends Seeder
             'maternal_surname' => 'Admin',
             'document_type' => '000',
             'document_number' => '00000000',
-            'email' => 'super@test.com',
+            'email' => 'serviciosocial@unap.edu.pe',
             'password' => 'super@test.com',
             'office_id' => null,
             'is_editable' => false,

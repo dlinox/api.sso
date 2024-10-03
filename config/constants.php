@@ -56,8 +56,8 @@ return [
             ],
         ],
         [
-            'name' => 'reports',
-            'description' =>  'Reportes',
+            'name' => 'reports.attentions',
+            'description' =>  'Reportes de atenciónes',
             'type' => '001',
             'actions' => [
                 [
@@ -73,6 +73,18 @@ return [
                 [
                     'name' => 'reports.pdf',
                     'description' => 'Atenciónes - PDF',
+                    'type' => '002',
+                ]
+            ]
+        ],
+        [
+            'name' => 'reports.users',
+            'description' =>  'Reportes de usuarios',
+            'type' => '001',
+            'actions' => [
+                [
+                    'name' => 'reports.users.pdf',
+                    'description' => 'Reportes de usuario - PDF',
                     'type' => '002',
                 ]
             ]

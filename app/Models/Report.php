@@ -9,19 +9,6 @@ class Report extends Model
 {
     use HasFactory;
 
-    /*
-    Schema::create('reports', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->char('type')->default('I01');
-            $table->string('number');
-            $table->char('year', 4);
-            $table->longText('payload');
-            $table->unsignedBigInteger('user_id');
-            $table->unique(['number', 'year', 'type']);
-            $table->timestamps();
-        });
-    */
 
     protected $fillable = [
         'name',
@@ -47,6 +34,4 @@ class Report extends Model
             return '0001';
         }
     }
-
-
 }
