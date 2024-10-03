@@ -253,6 +253,11 @@ class AttentionController extends Controller
             $request['derivations'] = implode(',', $request->derivate_to);
             $attention = Attention::create($request->only('report_number', 'description', 'derivations', 'person_id', 'type_attention_id', 'user_id', 'person_type'));
 
+            //verificar si hay el email en el request
+            if (!$request->email || $request->email == '' || $request->email == null) {
+                DB::commit();
+                return response()->json(['message' => 'Atención registrada con éxito']);
+            }
 
             $satisfactionSurvey = SatisfactionSurvey::create([
                 'attention_id' => $attention->id,
@@ -262,7 +267,6 @@ class AttentionController extends Controller
             ]);
 
             //buscar a la persona y actualizar el correo
-
             if ($type == '001') {
                 $student = Student::find($request->person_id);
                 $student->update(['email' => $request->email]);

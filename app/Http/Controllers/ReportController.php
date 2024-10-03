@@ -160,14 +160,15 @@ class ReportController extends Controller
         $end_date = $request->end_date;
 
         $query = DB::table('users as u')
-            ->leftJoin('satisfaction_surveys as sa', 'sa.user_id', '=', 'u.id')
+            ->leftJoin('attentions as a', 'a.user_id', '=', 'u.id')
+            ->leftJoin('satisfaction_surveys as sa', 'sa.attention_id', '=', 'a.id')
             ->select(
                 'u.id',
                 'u.name',
                 'u.paternal_surname',
                 'u.maternal_surname',
                 'u.email',
-                DB::raw('COUNT(sa.id) as total_surveys'),
+                DB::raw('COUNT(a.id) as total_surveys'),
                 DB::raw('AVG(sa.score) as average_score'),
                 DB::raw('SUM(CASE WHEN sa.score = 5 THEN 1 ELSE 0 END) as five_score'),
                 DB::raw('SUM(CASE WHEN sa.score = 4 THEN 1 ELSE 0 END) as four_score'),
