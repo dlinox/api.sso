@@ -33,9 +33,7 @@ class WorkerController extends Controller
         if ($request->has('filters') && is_array($request->filters)) {
             foreach ($request->filters as $filter => $value) {
                 if (!is_null($value)) {
-                    $query->where(function ($q) use ($filter, $value) {
-                        $q->where($filter, $value);
-                    });
+                    $query->where($filter, $value);
                 }
             }
         }
