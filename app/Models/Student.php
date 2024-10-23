@@ -43,7 +43,7 @@ class Student extends Model
 
     public function getCareerNameAttribute()
     {
-        return Career::where('code', $this->attributes['career_code'])->first()->name;
+        return Career::where('code', $this->attributes['career_code'])->first()->name ?? null;
     }
 
     public function getFullNameAttribute()
