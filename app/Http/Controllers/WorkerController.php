@@ -21,14 +21,21 @@ class WorkerController extends Controller
         $query = $this->worker->query();
 
         if ($request->has('search')) {
-            $query->where('name', 'like', '%' . $request->search . '%');
+            $query->where(function ($q) use ($request) {
+                $q->where('name', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('paternal_surname', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('maternal_surname', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('document_number', 'LIKE', '%' . $request->search . '%');
+            });
         }
 
         // Filtros dinámicos
         if ($request->has('filters') && is_array($request->filters)) {
             foreach ($request->filters as $filter => $value) {
                 if (!is_null($value)) {
-                    $query->where($filter, $value);
+                    $query->where(function ($q) use ($filter, $value) {
+                        $q->where($filter, $value);
+                    });
                 }
             }
         }
