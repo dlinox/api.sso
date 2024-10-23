@@ -23,13 +23,18 @@ class StudentController extends Controller
         $query = $this->student->query();
 
         if ($request->has('search') && $request->search != '') {
-            $query->where('name', 'like', '%' . $request->search . '%');
+            $query->where(function ($q) use ($request) {
+                $q->where('name', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('paternal_surname', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('maternal_surname', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('document_number', 'LIKE', '%' . $request->search . '%')
+                    ->orWhere('student_code', 'LIKE', '%' . $request->search . '%');
+            });
         }
 
         // Filtros dinámicos
         if ($request->has('filters') && is_array($request->filters)) {
             foreach ($request->filters as $filter => $value) {
-                // Aquí puedes agregar validaciones adicionales según sea necesario
                 if (!is_null($value)) {
                     $query->where($filter, $value);
                 }
