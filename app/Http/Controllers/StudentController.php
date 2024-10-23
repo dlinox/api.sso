@@ -22,7 +22,7 @@ class StudentController extends Controller
 
         $query = $this->student->query();
 
-        if ($request->has('search')) {
+        if ($request->has('search') && $request->search != '') {
             $query->where('name', 'like', '%' . $request->search . '%');
         }
 
