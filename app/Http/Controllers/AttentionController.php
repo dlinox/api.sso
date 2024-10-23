@@ -70,7 +70,15 @@ class AttentionController extends Controller
         }
 
         if ($request->has('startDate') && $request->has('endDate')) {
-            $query->whereBetween('attentions_view.created_at', [$request->startDate, $request->endDate]);
+            //si es la misma fecha
+            if ($request->startDate == $request->endDate) {
+                $query->whereDate('attentions_view.created_at', $request->startDate);
+            }
+            //si es un rango de fechas
+            else {
+                $query->whereBetween('attentions_view.created_at', [$request->startDate, $request->endDate]);
+            }
+         
         }
 
 
