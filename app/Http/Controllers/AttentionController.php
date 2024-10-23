@@ -20,10 +20,13 @@ use Illuminate\Support\Facades\Mail;
 class AttentionController extends Controller
 {
     protected $attention;
+    protected $attention_view;
 
     public function __construct()
     {
         $this->attention = new Attention();
+
+        $this->attention_view = DB::table('attentions_view');
     }
 
 

@@ -55,15 +55,22 @@ class AuthController extends Controller
 
     public function user(Request $request)
     {
-        $user =  $request->user();
-        return response()->json([
-            'user' => [
-                'id' => $user->id,
-                'name' => $user->name . ' ' . $user->paternal_surname . ' ' . $user->maternal_surname,
-                'role' => $user->getRoleNames()[0],
-                'email' => $user->email,
-            ],
-            'permissions' => implode('|', $user->getAllPermissions()->pluck('name')->toArray()),
-        ]);
+
+        try {
+
+
+            $user =  $request->user();
+            return response()->json([
+                'user' => [
+                    'id' => $user->id,
+                    'name' => $user->name . ' ' . $user->paternal_surname . ' ' . $user->maternal_surname,
+                    'role' => $user->getRoleNames()[0],
+                    'email' => $user->email,
+                ],
+                'permissions' => implode('|', $user->getAllPermissions()->pluck('name')->toArray()),
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 }

@@ -180,19 +180,15 @@ class ReportController extends Controller
             ->groupBy('u.id')
             ->orderBy('average_score', 'DESC');
 
-        // Si hay fechas, aplicamos los filtros de rango
         if ($start_date && $end_date) {
             $query->whereBetween('sa.created_at', [$start_date, $end_date]);
         }
 
-        // Ejecutar la consulta
         $response = $query->get();
-
 
         return response()->json($response);
     }
 
-    //rerportUserPdf
     public function rerportUserPdf(Request $request)
     {
         try {
