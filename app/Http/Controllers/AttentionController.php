@@ -78,9 +78,7 @@ class AttentionController extends Controller
             else {
                 $query->whereBetween('attentions_view.created_at', [$request->startDate, $request->endDate]);
             }
-         
         }
-
 
         if ($type !== '000') {
             $query->where('person_type', $type);
