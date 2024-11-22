@@ -33,16 +33,16 @@ class AttentionController extends Controller
     public function items(Request $request)
     {
 
+        $user = Auth::user();
+
         $query = $this->attention->query();
 
         if ($request->has('search')) {
             $query->where('name', 'like', '%' . $request->search . '%');
         }
 
-
         if ($request->has('filters') && is_array($request->filters)) {
             foreach ($request->filters as $filter => $value) {
-
                 $query->where($filter, $value);
             }
         }
@@ -52,6 +52,7 @@ class AttentionController extends Controller
                 $query->orderBy($sort['key'], $sort['order']);
             }
         }
+
 
         $perPage = $request->itemsPerPage == -1
             ? $query->count()
@@ -66,27 +67,31 @@ class AttentionController extends Controller
         $query = DB::table('attentions_view');
 
         if (Auth::user()->office_id) {
-            $query->where('attentions_view.user_id', Auth::user()->id);
+            $query->where(function ($query) {
+                $query->where('attentions_view.user_id', Auth::user()->id);
+            });
         }
 
         if ($request->has('startDate') && $request->has('endDate')) {
-            //si es la misma fecha
-            if ($request->startDate == $request->endDate) {
-                $query->whereDate('attentions_view.created_at', $request->startDate);
-            }
-            //si es un rango de fechas
-            else {
-                $query->whereBetween('attentions_view.created_at', [$request->startDate, $request->endDate]);
-            }
+
+            $query->where(function ($query) use ($request) {
+                if ($request->startDate == $request->endDate) {
+                    $query->whereDate('attentions_view.created_at', $request->startDate);
+                } else {
+                    $query->whereBetween('attentions_view.created_at', [$request->startDate, $request->endDate]);
+                }
+            });
         }
 
         if ($type !== '000') {
-            $query->where('person_type', $type);
+            $query->where(function ($query) use ($type) {
+                $query->where('person_type', $type);
+            });
         }
         //add user_name
         $query->select(
             'attentions_view.*',
-            DB::raw("concat_ws(' ', users.name,  users.paternal_surname, users.maternal_surname) as user_name"),
+            DB::raw("concat_ws(' ', users.name,  users.paternal_surname, users.maternal_surname) as user_name")
         )
             ->join('type_attentions', 'type_attentions.id', '=', 'attentions_view.type_attention_id')
             ->join('users', 'users.id', '=', 'attentions_view.user_id')
@@ -105,7 +110,9 @@ class AttentionController extends Controller
             foreach ($request->filters as $filter => $value) {
                 // Aquí puedes agregar validaciones adicionales según sea necesario
                 if (!is_null($value)) {
-                    $query->where($filter, $value);
+                    $query->where(function ($query) use ($filter, $value) {
+                        $query->where($filter, $value);
+                    });
                 }
             }
         }
@@ -147,7 +154,7 @@ class AttentionController extends Controller
             DB::raw(' If(TIMESTAMPDIFF(SECOND, attentions.created_at, NOW()) > 60 , false, true )  as editable'),
             //la hora actual
             DB::raw('NOW() as now'),
-            'type_attentions.name as type_attention_name',
+            'type_attentions.name as type_attention_name'
         )
             ->join('type_attentions', 'type_attentions.id', '=', 'attentions.type_attention_id')
             ->orderBy('attentions.created_at', 'desc');
@@ -198,7 +205,7 @@ class AttentionController extends Controller
             when '002' then ''
             when '003' then (select name from offices where id = (select office_id from workers where id = attentions.person_id))
             when '004' then ''
-            end as office_name"),
+            end as office_name")
         )
             ->join('type_attentions', 'type_attentions.id', '=', 'attentions.type_attention_id')
             ->orderBy('attentions.created_at', 'desc')
