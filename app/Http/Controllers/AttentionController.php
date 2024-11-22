@@ -66,6 +66,25 @@ class AttentionController extends Controller
     {
         $query = DB::table('attentions_view');
 
+
+        //add user_name
+        $query->select(
+            'attentions_view.*',
+            DB::raw("concat_ws(' ', users.name,  users.paternal_surname, users.maternal_surname) as user_name")
+        )
+            ->join('type_attentions', 'type_attentions.id', '=', 'attentions_view.type_attention_id')
+            ->join('users', 'users.id', '=', 'attentions_view.user_id')
+            ->orderBy('attentions_view.created_at', 'desc');
+
+        if ($request->has('search')) {
+            $search = $request->search;
+            $query->where(function ($query) use ($search) {
+                $query->where('attentions_view.person_name', 'like', '%' . $search . '%')
+                    ->orWhere('attentions_view.person_document', 'like', '%' . $search . '%')
+                    ->orWhere('attentions_view.person_code', 'like', '%' . $search . '%');
+            });
+        }
+
         if (Auth::user()->office_id) {
             $query->where(function ($query) {
                 $query->where('attentions_view.user_id', Auth::user()->id);
@@ -88,27 +107,10 @@ class AttentionController extends Controller
                 $query->where('person_type', $type);
             });
         }
-        //add user_name
-        $query->select(
-            'attentions_view.*',
-            DB::raw("concat_ws(' ', users.name,  users.paternal_surname, users.maternal_surname) as user_name")
-        )
-            ->join('type_attentions', 'type_attentions.id', '=', 'attentions_view.type_attention_id')
-            ->join('users', 'users.id', '=', 'attentions_view.user_id')
-            ->orderBy('attentions_view.created_at', 'desc');
 
-        if ($request->has('search')) {
-            $search = $request->search;
-            $query->where(function ($query) use ($search) {
-                $query->where('attentions_view.person_name', 'like', '%' . $search . '%')
-                    ->orWhere('attentions_view.person_document', 'like', '%' . $search . '%')
-                    ->orWhere('attentions_view.person_code', 'like', '%' . $search . '%');
-            });
-        }
-        // Filtros dinámicos
         if ($request->has('filters') && is_array($request->filters)) {
             foreach ($request->filters as $filter => $value) {
-                // Aquí puedes agregar validaciones adicionales según sea necesario
+
                 if (!is_null($value)) {
                     $query->where(function ($query) use ($filter, $value) {
                         $query->where($filter, $value);
