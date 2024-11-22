@@ -66,6 +66,7 @@ class AttentionController extends Controller
     {
         $query = DB::table('attentions_view');
 
+        $user = Auth::user();
 
         //add user_name
         $query->select(
@@ -85,7 +86,7 @@ class AttentionController extends Controller
             });
         }
 
-        if (Auth::user()->office_id) {
+        if (!$user->hasRole('super')) {
             $query->where(function ($query) {
                 $query->where('attentions_view.user_id', Auth::user()->id);
             });
@@ -144,7 +145,8 @@ class AttentionController extends Controller
     {
         $query = $this->attention->query();
 
-        if (Auth::user()->office_id) {
+        $user = Auth::user();
+        if (!$user->hasRole('super')) {
             $query->where('attentions.user_id', Auth::user()->id);
         }
 
@@ -228,6 +230,7 @@ class AttentionController extends Controller
         )
             ->join('type_attentions', 'type_attentions.id', '=', 'attentions.type_attention_id')
             ->orderBy('attentions.created_at', 'desc')
+            // ->where('attentions.user_id', Auth::user()->id)
             ->limit(15)->get()->map(function ($attention) {
                 //name of the type of attention
                 if ($attention->person_type == '001') {
