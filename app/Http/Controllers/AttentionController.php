@@ -91,7 +91,7 @@ class AttentionController extends Controller
             });
         }
 
-        if ($request->has('startDate') && $request->has('endDate')) {
+        if ($request->startDate && $request->endDate) {
 
             $query->where(function ($query) use ($request) {
                 if ($request->startDate == $request->endDate) {
