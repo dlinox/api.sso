@@ -8,15 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 class TypeAttention extends Model
 {
     use HasFactory;
-    /*
-        $table->string('name');
-            $table->string('description')->nullable();
-            $table->boolean('status')->default(true);
-    */
+
 
     protected $fillable = [
         'name',
         'description',
+        'type',
         'status'
     ];
 

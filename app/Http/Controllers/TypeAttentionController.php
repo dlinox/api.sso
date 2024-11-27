@@ -61,7 +61,7 @@ class TypeAttentionController extends Controller
         $request->validate(
             [
                 'name' => 'required|string|max:255',
-                'status' => 'required|boolean'
+                'status' => 'required|boolean',
             ],
             [
                 'name.required' => 'El nombre es obligatorio',
@@ -71,7 +71,7 @@ class TypeAttentionController extends Controller
 
         // $request['id'] = (string) Str::uuid();
         try {
-            $typeAttention = TypeAttention::create($request->only('id', 'name', 'status'));
+            $typeAttention = TypeAttention::create($request->only('id', 'name', 'status', 'type',));
             return response()->json([
                 'message' => 'Tipo de atención creado con éxito',
                 'typeAttention' => $typeAttention
@@ -90,7 +90,7 @@ class TypeAttentionController extends Controller
 
         try {
             $typeAttention = TypeAttention::find($typeAttention);
-            $typeAttention->update($request->only('name', 'status'));
+            $typeAttention->update($request->only('name', 'status', 'type'));
             return response()->json([
                 'message' => 'Tipo de atención actualizado con éxito',
                 'typeAttention' => $typeAttention
