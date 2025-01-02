@@ -56,6 +56,7 @@ class ReportController extends Controller
 
         $results = DB::table('attentions')
             ->selectRaw('person_type, MONTH(created_at) as month, COUNT(id) as counts')
+            ->whereYear('created_at', $year)
             ->groupBy('person_type', DB::raw('YEAR(created_at)'), DB::raw('MONTH(created_at)'))
             ->get();
 

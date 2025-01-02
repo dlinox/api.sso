@@ -390,7 +390,9 @@ class AttentionController extends Controller
     public function getNextByType($typeId)
     {
 
-        $current = Attention::where('type_attention_id', $typeId)->count();
+        $current = Attention::where('type_attention_id', $typeId)
+            ->whereYear('created_at', date('Y'))
+            ->count();
 
         return $current + 1;
     }
